@@ -1,7 +1,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { resolve } from 'node:path'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        parserOpts: {
+          plugins: ['decorators-legacy', 'classProperties']
+        }
+      }
+    })
+  ],
+  resolve: {
+    alias: {
+      '~': resolve(__dirname, 'src')
+    },
+  },
+  esbuild: {
+    target: 'es2020'
+  }
 })

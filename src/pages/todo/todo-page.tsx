@@ -1,8 +1,8 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useInjection } from "../../config";
-import { withContainer } from "../../config/ioc/with-container.tsx";
+import { useInjection } from "~/config";
+import { withContainer } from "~/config";
 import { TodoContainerToken } from "./todo-container-token.ts";
 import type { ITodoStore } from "./todo-store.ts";
 

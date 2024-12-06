@@ -1,3 +1,5 @@
 export * from './ioc-context';
-export * from './with-container';
 export * from './ioc.config';
+export * from './use-injection';
+export * from './with-container';
+
