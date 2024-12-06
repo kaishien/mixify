@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   useRef,
   useState,
@@ -6,7 +5,7 @@ import {
   useLayoutEffect,
   startTransition as startTransitionImpl,
 } from 'react';
-import { createBrowserHistory, History, Action, Location } from 'history';
+import { createBrowserHistory, type History, type Action, type Location } from 'history';
 import { Router } from 'react-router-dom';
 
 interface BrowserRouterProps {
@@ -57,7 +56,7 @@ export const BrowserRouter = (
         setStateImpl(newState);
       }
     },
-    [setStateImpl, v7_startTransition]
+    [setStateImpl, v7_startTransition],
   );
 
   useLayoutEffect(() => {

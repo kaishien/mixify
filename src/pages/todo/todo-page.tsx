@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { useInjection } from "../../config";
-import { ITodoStore } from "./todo-store.ts";
-import { TodoContainerToken } from "./todo-container-token.ts";
-import { withContainer } from "../../config/ioc/with-container.tsx";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useInjection } from "../../config";
+import { withContainer } from "../../config/ioc/with-container.tsx";
+import { TodoContainerToken } from "./todo-container-token.ts";
+import type { ITodoStore } from "./todo-store.ts";
 
 
 const TodoPageComponent = observer(() => {
@@ -68,6 +68,7 @@ const TodoPageComponent = observer(() => {
             }}
           />
           <button
+            type="button"
             onClick={() => saveEdit(index)}
             style={{
               backgroundColor: '#4caf50',
@@ -80,6 +81,7 @@ const TodoPageComponent = observer(() => {
             Сохранить
           </button>
           <button
+            type="button"
             onClick={cancelEdit}
             style={{
               backgroundColor: '#f44336',
@@ -112,6 +114,7 @@ const TodoPageComponent = observer(() => {
           }}
         />
         <button
+          type="button"
           onClick={() => startEditing(index, todo)}
           style={{
             backgroundColor: '#4caf50',
@@ -124,6 +127,7 @@ const TodoPageComponent = observer(() => {
           Изменить
         </button>
         <button
+          type="button"
           onClick={() => todoStore.deleteTodo(index)}
           style={{
             backgroundColor: '#f44336',
@@ -174,7 +178,7 @@ const TodoPageComponent = observer(() => {
             border: '1px solid #646cff'
           }}
         />
-        <button onClick={addTodo}>Добавить</button>
+        <button type="button" onClick={addTodo}>Добавить</button>
       </div>
       {validate && <p style={{ color: 'red' }}>{validate}</p>}
       <ul style={{ listStyle: 'none', padding: 0 }}>

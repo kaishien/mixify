@@ -1,20 +1,14 @@
-import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useInjection } from "../../config";
 import { withContainer } from "../../config/ioc/with-container";
 import { TodoContainerToken } from "./todo-container-token";
-import { ITodoStore } from "./todo-store";
-import { useInjection } from "../../config";
-
-interface TodoDetailsPageProps {
-  todoStore: ITodoStore;
-}
+import type { ITodoStore } from "./todo-store";
 
 const TodoDetailsPageComponent = observer(() => {
   const todoStore = useInjection<ITodoStore>(TodoContainerToken.TodoStore);
   const { id } = useParams<{ id: string }>();
-
-  console.log(todoStore.currentTodo);
 
   useEffect(() => {
     if (id) {

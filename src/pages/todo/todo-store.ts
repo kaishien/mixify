@@ -1,8 +1,9 @@
-import { action, makeAutoObservable, makeObservable, observable } from "mobx"
 import { inject, injectable } from "inversify";
-import { AbstractLogger } from "../../shared/services/LoggerService.ts";
+import { makeAutoObservable } from "mobx";
+import type { IService } from "../../config/service.interface.ts";
 import { AsyncOperationFactory } from "../../shared/factories/async-operation.factory.ts";
-import { IService } from "../../config/service.interface.ts";
+import { AbstractLogger } from "../../shared/services/LoggerService.ts";
+
 
 export interface ITodoStore {
   todos: string[];

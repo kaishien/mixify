@@ -39,7 +39,8 @@ export const HomePage = () => {
         gap: '1rem',
         alignItems: 'center'
       }}>
-        <button 
+        <button
+          type="button" 
           onClick={() => navigate("/todo")}
           style={{
             backgroundColor: '#646cff',
