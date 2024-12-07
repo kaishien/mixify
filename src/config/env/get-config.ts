@@ -1,8 +1,10 @@
 export const getConfig = () => {
-    return {
-        clientId: import.meta.env.CLIENT_ID,
-        clientSecret: import.meta.env.CLIENT_SECRET,
-        baseApiUrl: import.meta.env.BASE_API_URL,
-        accountApiUrl: import.meta.env.ACCOUNT_API_URL,
-    }
-}
+	return {
+		clientId: import.meta.env.VITE_CLIENT_ID,
+		clientSecret: import.meta.env.VITE_CLIENT_SECRET,
+		baseApiUrl: import.meta.env.VITE_BASE_API_URL,
+		accountApiUrl: import.meta.env.VITE_ACCOUNT_API_URL,
+	};
+};
+
+export const config = getConfig();

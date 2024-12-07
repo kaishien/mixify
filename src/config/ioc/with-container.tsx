@@ -1,5 +1,5 @@
 import { type ComponentType, useEffect, useMemo } from "react";
-import { container } from "./ioc.config";
+import { container } from "~/application/register-dependencies";
 import type { IService } from "../service.interface";
 
 type Dependencies<T> = {

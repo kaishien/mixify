@@ -3,8 +3,8 @@ import { injectable } from "inversify";
 import type { To } from "history";
 
 export interface IRouterService {
-  push(to: To, state?: any): void;
-  replace(to: To, state?: any): void;
+  push(to: To, state?: unknown): void;
+  replace(to: To, state?: unknown): void;
   goBack(): void;
   goForward(): void;
 }
@@ -15,11 +15,11 @@ export class RouterService implements IRouterService {
     return history.location;
   }
 
-  push(to: To, state?: any) {
+  push(to: To, state?: unknown) {
     history.push(to, state);
   }
 
-  replace(to: To, state?: any) {
+  replace(to: To, state?: unknown) {
     history.replace(to, state);
   }
 

@@ -1,121 +1,118 @@
 export interface AsyncOperationResult<T> {
-  data: T | null;
-  error: Error | null;
-  isLoading: boolean;
-  isError: boolean;
-  isSuccess: boolean;
-  cachedAt?: Date;
+	data: T | null;
+	error: Error | null;
+	isLoading: boolean;
+	isError: boolean;
+	isSuccess: boolean;
+	cachedAt?: Date;
 }
 
 interface CacheOptions {
-  cacheKey: string;
-  ttl?: number;
-  forceRefresh?: boolean;
+	cacheKey: string;
+	ttl?: number;
+	forceRefresh?: boolean;
 }
 
 interface CacheEntry<T> {
-  result: AsyncOperationResult<T>;
-  timestamp: number;
-  ttl: number;
+	result: AsyncOperationResult<T>;
+	timestamp: number;
+	ttl: number;
 }
 
-export class AsyncOperationFactory {
-  private static cache = new Map<string, CacheEntry<any>>();
+export class AsyncOperation {
+	private cache = new Map<string, CacheEntry<unknown>>();
 
-  static async execute<T>(
-    operation: () => Promise<T>,
-    options?: {
-      onSuccess?: (data: T) => void;
-      onError?: (error: Error) => void;
-      cache?: CacheOptions;
-    }
-  ): Promise<AsyncOperationResult<T>> {
-    const cacheOptions = options?.cache;
-    
-    if (cacheOptions) {
-      const cachedResult = this.getFromCache<T>(cacheOptions);
-      if (cachedResult && !cacheOptions.forceRefresh) {
-        return cachedResult;
-      }
-    }
+	async execute<T>(
+		operation: () => Promise<T>,
+		options?: {
+			onSuccess?: (data: T) => void;
+			onError?: (error: Error) => void;
+			cache?: CacheOptions;
+		},
+	): Promise<AsyncOperationResult<T>> {
+		const cacheOptions = options?.cache;
 
-    const initialState: AsyncOperationResult<T> = {
-      data: null,
-      error: null,
-      isLoading: true,
-      isError: false,
-      isSuccess: false,
-    };
+		if (cacheOptions) {
+			const cachedResult = this.getFromCache<T>(cacheOptions);
+			if (cachedResult && !cacheOptions.forceRefresh) {
+				return cachedResult;
+			}
+		}
 
-    try {
-      const data = await operation();
-      const successState: AsyncOperationResult<T> = {
-        ...initialState,
-        data,
-        isLoading: false,
-        isSuccess: true,
-        cachedAt: new Date(),
-      };
-      
-      options?.onSuccess?.(data);
+		const initialState: AsyncOperationResult<T> = {
+			data: null,
+			error: null,
+			isLoading: true,
+			isError: false,
+			isSuccess: false,
+		};
 
-      if (cacheOptions) {
-        this.setToCache(cacheOptions, successState);
-      }
+		try {
+			const data = await operation();
+			const successState: AsyncOperationResult<T> = {
+				...initialState,
+				data,
+				isLoading: false,
+				isSuccess: true,
+				cachedAt: new Date(),
+			};
 
-      return successState;
-    } catch (error) {
-      const errorState: AsyncOperationResult<T> = {
-        ...initialState,
-        error: error instanceof Error ? error : new Error(String(error)),
-        isLoading: false,
-        isError: true,
-      };
-      
-      if (options?.onError && errorState.error) {
-        options.onError(errorState.error);
-      }
-      
-      return errorState;
-    }
-  }
+			options?.onSuccess?.(data);
 
-  private static getFromCache<T>(options: CacheOptions): AsyncOperationResult<T> | null {
-    const cached = this.cache.get(options.cacheKey);
-    
-    if (!cached) {
-      return null;
-    }
+			if (cacheOptions) {
+				this.setToCache(cacheOptions, successState);
+			}
 
-    const now = Date.now();
-    if (now - cached.timestamp > cached.ttl) {
-      this.cache.delete(options.cacheKey);
-      return null;
-    }
+			return successState;
+		} catch (error) {
+			const errorState: AsyncOperationResult<T> = {
+				...initialState,
+				error: error instanceof Error ? error : new Error(String(error)),
+				isLoading: false,
+				isError: true,
+			};
 
-    return cached.result;
-  }
+			if (options?.onError && errorState.error) {
+				options.onError(errorState.error);
+			}
 
-  private static setToCache<T>(
-    options: CacheOptions, 
-    result: AsyncOperationResult<T>
-  ): void {
-    this.cache.set(options.cacheKey, {
-      result,
-      timestamp: Date.now(),
-      ttl: options.ttl ?? 5 * 60 * 1000,
-    });
-  }
+			return errorState;
+		}
+	}
 
-  static clearCache(): void {
-    this.cache.clear();
-  }
+	private getFromCache<T>(options: CacheOptions): AsyncOperationResult<T> | null {
+		const cached = this.cache.get(options.cacheKey);
 
-  static removeCacheEntry(cacheKey: string): void {
-    this.cache.delete(cacheKey);
-  }
+		if (!cached) {
+			return null;
+		}
 
-  static getCacheSize(): number {
-    return this.cache.size;
-  }
-} 
+		const now = Date.now();
+		if (now - cached.timestamp > cached.ttl) {
+			this.cache.delete(options.cacheKey);
+			return null;
+		}
+
+		return cached.result as AsyncOperationResult<T>;
+	}
+
+	private setToCache<T>(options: CacheOptions, result: AsyncOperationResult<T>): void {
+		this.cache.set(options.cacheKey, {
+			result,
+			timestamp: Date.now(),
+			ttl: options.ttl ?? 5 * 60 * 1000,
+		});
+	}
+
+	clearCache(): void {
+		this.cache.clear();
+	}
+
+	removeCacheEntry(cacheKey: string): void {
+		this.cache.delete(cacheKey);
+	}
+
+	getCacheSize(): number {
+		return this.cache.size;
+	}
+}

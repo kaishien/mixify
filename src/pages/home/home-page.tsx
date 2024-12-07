@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
+import { withContainer } from "~/config";
+import { AuthContainerToken } from "./auth-service";
 
-export const HomePage = () => {
+const Home = () => {
   const navigate = useNavigate();
 
   return (
@@ -66,3 +68,7 @@ export const HomePage = () => {
     </div>
   );
 }
+
+export const HomePage = withContainer(Home, {
+  authService: AuthContainerToken.AuthService,
+});

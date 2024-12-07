@@ -1,10 +1,11 @@
-import { IocProvider, container } from '../config'
+import { IocProvider } from '../config'
+import { container } from './register-dependencies.ts'
 import {
   Link, useRoutes,
 } from "react-router-dom";
 import { BrowserRouter } from '../config/router/browser-router.tsx'
 import { history } from '../config/router/history.ts'
-import { routes } from "../pages";
+import { routes } from "../pages/routes.tsx";
 
 const Navigation = () => (
   <nav>

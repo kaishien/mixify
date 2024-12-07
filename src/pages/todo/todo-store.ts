@@ -1,8 +1,7 @@
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import { makeAutoObservable } from "mobx";
 import type { IService } from "../../config/service.interface.ts";
-import { AsyncOperationFactory } from "../../shared/factories/async-operation.factory.ts";
-import { AbstractLogger } from "../../shared/services/LoggerService.ts";
+import { AsyncOperation } from "../../shared/factories/async-operation.factory.ts";
 
 
 export interface ITodoStore {
@@ -29,15 +28,15 @@ export class TodoStore implements ITodoStore, IService {
   todos: string[] = [];
   todoList: string[] = [];
   currentTodo: Todo | null = null;
+  
+  private asyncOperation: AsyncOperation;
 
-  constructor(
-    @inject(AbstractLogger) private logger: AbstractLogger,
-  ) {
+  constructor() {
     makeAutoObservable(this);
+    this.asyncOperation = new AsyncOperation();
   }
 
   addTodo = (todo: string) => {
-    this.logger.log(`Adding todo: ${todo}`);
     this.todos.push(todo);
   };
 
@@ -54,7 +53,7 @@ export class TodoStore implements ITodoStore, IService {
   };
 
   async initialize(): Promise<void> {
-    const result = await AsyncOperationFactory.execute<Todo[]>(
+    const result = await this.asyncOperation.execute<Todo[]>(
       async () => {
         const response = await fetch("https://jsonplaceholder.typicode.com/todos");
         return response.json();
@@ -72,7 +71,7 @@ export class TodoStore implements ITodoStore, IService {
   }
 
   async fetchTodoById(id: number) {
-    const result = await AsyncOperationFactory.execute<Todo>(
+    const result = await this.asyncOperation.execute<Todo>(
       async () => {
         const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`);
         return response.json();
