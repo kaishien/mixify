@@ -41,7 +41,7 @@ export class AuthApi {
 
 		this.baseClient.setAccessToken(response.access_token);
 		return response;
-	};
+	}
 
 	async refreshToken(refreshToken: string): Promise<AuthorizationResponse> {
 		const formData = new URLSearchParams();
@@ -54,5 +54,5 @@ export class AuthApi {
 				Authorization: `Basic ${btoa(`${config.clientId}:${config.clientSecret}`)}`,
 			},
 		});
-	};
+	}
 }

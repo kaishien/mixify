@@ -3,6 +3,9 @@ import type { Container } from "inversify";
 
 export const IocContext = React.createContext<Container | null>(null);
 
-export const IocProvider: React.FC<{ container: Container, children: ReactNode }> = ({ container, children }) => {
-  return <IocContext.Provider value={container}>{children}</IocContext.Provider>;
+export const IocProvider: React.FC<{ container: Container; children: ReactNode }> = ({
+	container,
+	children,
+}) => {
+	return <IocContext.Provider value={container}>{children}</IocContext.Provider>;
 };

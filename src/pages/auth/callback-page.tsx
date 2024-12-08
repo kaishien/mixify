@@ -9,7 +9,7 @@ export const CallbackAuth = () => {
 		const handleCallback = async () => {
 			const url = new URL(window.location.href);
 			const code = url.searchParams.get("code");
-			
+
 			if (code) {
 				await authService.handleCallback(code);
 			}
@@ -19,7 +19,7 @@ export const CallbackAuth = () => {
 	}, [authService]);
 
 	return null;
-}
+};
 
 export const CallbackPage = withContainer(CallbackAuth, {
 	authService: AuthContainerToken.AuthService,

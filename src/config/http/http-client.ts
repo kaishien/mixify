@@ -2,11 +2,11 @@ import { injectable } from "inversify";
 import { AUTH_STORAGE_KEY } from "~/shared/constants";
 import { type CacheStrategy, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
 export interface AuthorizationResponse {
-  access_token: string;
-  refresh_token: string;
-  token_type: string;
-  expires_in: number;
-  scope: string;
+	access_token: string;
+	refresh_token: string;
+	token_type: string;
+	expires_in: number;
+	scope: string;
 }
 
 @injectable()
