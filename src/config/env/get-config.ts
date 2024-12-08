@@ -4,6 +4,7 @@ export const getConfig = () => {
 		clientSecret: import.meta.env.VITE_CLIENT_SECRET,
 		baseApiUrl: import.meta.env.VITE_BASE_API_URL,
 		accountApiUrl: import.meta.env.VITE_ACCOUNT_API_URL,
+		authRedirectUri: import.meta.env.VITE_AUTH_REDIRECT_URI,
 	};
 };
 

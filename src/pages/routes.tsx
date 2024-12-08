@@ -1,9 +1,5 @@
-import { lazy, Suspense } from "react";
-
-import { HomePage } from './home'
-import { TodoDetailsPage } from "./todo/todo-details-page";
-
-const TodoPage = lazy(() => import("./todo").then((module) => ({ default: module.default })));
+import { CallbackPage } from "./auth/callback-page";
+import { HomePage } from './home';
 
 export const routes = [
   {
@@ -11,15 +7,7 @@ export const routes = [
     element: <HomePage />,
   },
   {
-    path: '/todo',
-    element: (
-      <Suspense fallback={<div>Loading...</div>}>
-        <TodoPage />
-      </Suspense>
-    ),
-  },
-  {
-    path: '/todo/:id',
-    element: <TodoDetailsPage />,
+    path: '/callback',
+    element: <CallbackPage />,
   },
 ];

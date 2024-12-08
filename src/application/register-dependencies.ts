@@ -1,15 +1,9 @@
 import { Container } from "inversify";
-import { config, HttpClient, HttpClientToken } from '~/config';
+import { HttpClient, HttpClientToken, config } from '~/config';
 import { RouterService } from '~/config/router/router-service';
 import { AuthContainerToken, AuthService } from "~/pages/home/auth-service";
-import {
-  type ITodoAnalyticsService,
-  type ITodoStore,
-  TodoAnalyticsService,
-  TodoContainerToken,
-  TodoStore
-} from '~/pages/todo';
 import { AuthApi } from "~/shared/api";
+import { UserApi } from "~/shared/api/modules/user";
 
 const container = new Container();
 
@@ -24,20 +18,10 @@ container.bind<HttpClient>(HttpClientToken.Account)
     .inSingletonScope();
 
 container.bind(AuthApi).to(AuthApi).inSingletonScope();
+container.bind(UserApi).to(UserApi).inSingletonScope();
 container.bind(AuthContainerToken.AuthService)
     .to(AuthService)
     .inSingletonScope();
-
-container.bind<ITodoStore>(TodoContainerToken.TodoStore)
-    .to(TodoStore)
-    .inSingletonScope();
-
-container.bind<ITodoAnalyticsService>(TodoContainerToken.AnalyticsTodoService)
-    .toDynamicValue((context) => {
-        const todoStore = context.container.get<ITodoStore>(TodoContainerToken.TodoStore);
-        return new TodoAnalyticsService(todoStore);
-    })
-    .inTransientScope();
 
 export { container };
 

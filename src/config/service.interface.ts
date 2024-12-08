@@ -1,4 +1,4 @@
 export interface IService {
-  initialize(): Promise<void>;
-  cleanup(): Promise<void>;
+  initialize?(): Promise<void>;
+  cleanup?(): Promise<void>;
 } 

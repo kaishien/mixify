@@ -1,9 +1,12 @@
+import { observer } from "mobx-react-lite";
 import { Link, useNavigate } from "react-router-dom";
-import { withContainer } from "~/config";
+import { useInjection, withContainer } from "~/config";
+import type { AuthService } from "./auth-service";
 import { AuthContainerToken } from "./auth-service";
 
-const Home = () => {
+const Home = observer(() => {
   const navigate = useNavigate();
+  const authService = useInjection<AuthService>(AuthContainerToken.AuthService);
 
   return (
     <div className="home-container" style={{
@@ -43,14 +46,14 @@ const Home = () => {
       }}>
         <button
           type="button" 
-          onClick={() => navigate("/todo")}
+          onClick={() => authService.authorize()}
           style={{
             backgroundColor: '#646cff',
             color: 'white',
             transition: 'all 0.3s ease'
           }}
         >
-          Перейти к задачам
+          Login
         </button>
         
         <Link 
@@ -67,7 +70,7 @@ const Home = () => {
       </div>
     </div>
   );
-}
+});
 
 export const HomePage = withContainer(Home, {
   authService: AuthContainerToken.AuthService,

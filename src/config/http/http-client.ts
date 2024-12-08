@@ -1,15 +1,37 @@
 import { injectable } from "inversify";
+import { AUTH_STORAGE_KEY } from "~/shared/constants";
+import { type CacheStrategy, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
+export interface AuthorizationResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  expires_in: number;
+  scope: string;
+}
 
 @injectable()
 export class HttpClient {
 	private baseURL: string;
+	private accessToken = "";
+	private storage: CacheStrategy;
 
 	constructor(baseURL: string) {
 		this.baseURL = baseURL;
+		this.storage = new LocalStorageCacheStrategy();
+		const accessTokenFromStorage = this.storage.get<AuthorizationResponse>(AUTH_STORAGE_KEY);
+		this.accessToken = accessTokenFromStorage?.access_token ?? "";
+	}
+
+	setAccessToken(accessToken: string) {
+		this.accessToken = accessToken;
 	}
 
 	async get<T>(url: string): Promise<T> {
-		const response = await fetch(`${this.baseURL}${url}`);
+		const response = await fetch(`${this.baseURL}${url}`, {
+			headers: {
+				Authorization: `Bearer ${this.accessToken}`,
+			},
+		});
 		return response.json();
 	}
 
