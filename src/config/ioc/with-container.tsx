@@ -3,7 +3,7 @@ import { container } from "~/application/register-dependencies";
 import type { IService } from "../service.interface";
 
 type Dependencies<T> = {
-	[K in keyof T]: symbol | string;
+	[K in keyof T]: symbol | string | object;
 };
 
 function hasInitialize(instance: unknown): instance is IService {

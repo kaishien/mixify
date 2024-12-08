@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useInjection, withContainer } from "~/config";
-import { AuthContainerToken, type AuthService } from "../home/auth-service";
+import { type AuthService, AuthServiceContainerToken } from "~/services/auth";
 
 export const CallbackAuth = () => {
-	const authService = useInjection<AuthService>(AuthContainerToken.AuthService);
+	const authService = useInjection<AuthService>(AuthServiceContainerToken.AuthService);
 
 	useEffect(() => {
 		const handleCallback = async () => {
@@ -22,5 +22,5 @@ export const CallbackAuth = () => {
 };
 
 export const CallbackPage = withContainer(CallbackAuth, {
-	authService: AuthContainerToken.AuthService,
+	authService: AuthServiceContainerToken.AuthService,
 });

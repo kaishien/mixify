@@ -1,9 +1,8 @@
 import { inject, injectable } from "inversify";
 import { RouterService } from "~/config";
 import type { IService } from "~/config/service.interface";
-import { AuthApi } from "~/shared/api";
+import { AuthApi, PlaylistsApi, TracksApi, UserApi } from "~/shared/api";
 import type { AuthorizationResponse } from "~/shared/api/modules/auth/types";
-import { UserApi } from "~/shared/api/modules/user/user.api";
 import { AUTH_STORAGE_KEY } from "~/shared/constants";
 import {
 	AsyncOperation,
@@ -11,7 +10,7 @@ import {
 	LocalStorageCacheStrategy,
 } from "~/shared/factories/async-operation";
 
-export const AuthContainerToken = {
+export const AuthServiceContainerToken = {
 	AuthService: Symbol.for("AuthService"),
 };
 
@@ -23,35 +22,26 @@ export class AuthService implements IService {
 	constructor(
 		@inject(AuthApi) private readonly authApi: AuthApi,
 		@inject(RouterService) private readonly routerService: RouterService,
-		@inject(UserApi) private readonly userApi: UserApi,
 	) {
 		this.asyncOperation = new AsyncOperation();
 		this.storage = new LocalStorageCacheStrategy();
 	}
 
-	async initialize(): Promise<void> {
-		const authData = this.storage.get<AuthorizationResponse>(AUTH_STORAGE_KEY);
-
-		if (authData?.access_token) {
-			await this.refreshTokenIfNeeded(authData);
-			// TODO refactoring to other service
-			await this.userApi.getUser();
-		}
-	}
+	async initialize(): Promise<void> {}
 
 	private async refreshTokenIfNeeded(authData: AuthorizationResponse): Promise<void> {
 		if (!authData.refresh_token) return;
+		const refreshToken = authData.refresh_token;
 
 		const result = await this.asyncOperation.execute(
-			() => this.authApi.refreshToken(authData.refresh_token),
-			{
-				cache: {
-					strategy: this.storage,
-					key: AUTH_STORAGE_KEY,
-					ttl: 3600 * 1000,
-				},
-			},
+			async () => await this.authApi.refreshToken(refreshToken),
 		);
+
+		this.storage.set(AUTH_STORAGE_KEY, result.data, authData.expires_in * 1000);
+
+		if (result.data?.refresh_token) {
+			this.storage.set(AUTH_STORAGE_KEY, result.data, authData.expires_in * 1000);
+		}
 
 		if (!result.isSuccess) {
 			this.storage.remove(AUTH_STORAGE_KEY);
@@ -66,7 +56,7 @@ export class AuthService implements IService {
 				cache: {
 					strategy: this.storage,
 					key: AUTH_STORAGE_KEY,
-					ttl: 3600 * 1000,
+					ttl: 24 * 60 * 60 * 1000,
 				},
 			},
 		);

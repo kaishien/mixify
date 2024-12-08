@@ -1,12 +1,12 @@
 import { observer } from "mobx-react-lite";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useInjection, withContainer } from "~/config";
-import type { AuthService } from "./auth-service";
-import { AuthContainerToken } from "./auth-service";
+import { type AuthService, AuthServiceContainerToken } from "~/services/auth";
+import { type UserService, UserServiceContainerToken } from "~/services/user";
 
 const Home = observer(() => {
-	const navigate = useNavigate();
-	const authService = useInjection<AuthService>(AuthContainerToken.AuthService);
+	const authService = useInjection<AuthService>(AuthServiceContainerToken.AuthService);
+	const userService = useInjection<UserService>(UserServiceContainerToken.UserService);
 
 	return (
 		<div
@@ -30,7 +30,7 @@ const Home = observer(() => {
 					marginBottom: "1rem",
 				}}
 			>
-				Добро пожаловать
+				Добро пожаловать {userService.user?.display_name}
 			</h1>
 
 			<p
@@ -82,5 +82,6 @@ const Home = observer(() => {
 });
 
 export const HomePage = withContainer(Home, {
-	authService: AuthContainerToken.AuthService,
+	authService: AuthServiceContainerToken.AuthService,
+	userService: UserServiceContainerToken.UserService,
 });
