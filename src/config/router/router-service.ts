@@ -3,31 +3,31 @@ import { injectable } from "inversify";
 import type { To } from "history";
 
 export interface IRouterService {
-	push(to: To, state?: unknown): void;
-	replace(to: To, state?: unknown): void;
-	goBack(): void;
-	goForward(): void;
+  push(to: To, state?: unknown): void;
+  replace(to: To, state?: unknown): void;
+  goBack(): void;
+  goForward(): void;
 }
 
 @injectable()
 export class RouterService implements IRouterService {
-	get location() {
-		return history.location;
-	}
+  get location() {
+    return history.location;
+  }
 
-	push(to: To, state?: unknown) {
-		history.push(to, state);
-	}
+  push(to: To, state?: unknown) {
+    history.push(to, state);
+  }
 
-	replace(to: To, state?: unknown) {
-		history.replace(to, state);
-	}
+  replace(to: To, state?: unknown) {
+    history.replace(to, state);
+  }
 
-	goBack() {
-		history.back();
-	}
+  goBack() {
+    history.back();
+  }
 
-	goForward() {
-		history.forward();
-	}
+  goForward() {
+    history.forward();
+  }
 }
