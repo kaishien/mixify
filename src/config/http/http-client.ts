@@ -1,5 +1,7 @@
 import { injectable } from "inversify";
 import { AUTH_STORAGE_KEY } from "~/shared/constants";
+import { Events } from "~/shared/event-emmiter";
+import { eventEmitter } from "~/shared/event-emmiter";
 import { type CacheStrategy, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
 export interface AuthorizationResponse {
 	access_token: string;
@@ -32,6 +34,12 @@ export class HttpClient {
 				Authorization: `Bearer ${this.accessToken}`,
 			},
 		});
+
+		if (response.status === 401) {
+			eventEmitter.emit(Events.TOKEN_EXPIRED);
+			throw new Error('Token expired');
+		}
+
 		return response.json();
 	}
 

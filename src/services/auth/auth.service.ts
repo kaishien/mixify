@@ -1,14 +1,15 @@
 import { inject, injectable } from "inversify";
 import { RouterService } from "~/config";
 import type { IService } from "~/config/service.interface";
-import { AuthApi, PlaylistsApi, TracksApi, UserApi } from "~/shared/api";
+import { AuthApi } from "~/shared/api";
 import type { AuthorizationResponse } from "~/shared/api/modules/auth/types";
 import { AUTH_STORAGE_KEY } from "~/shared/constants";
 import {
-	AsyncOperation,
-	type CacheStrategy,
-	LocalStorageCacheStrategy,
+  AsyncOperation,
+  type CacheStrategy,
+  LocalStorageCacheStrategy,
 } from "~/shared/factories/async-operation";
+import { eventEmitter, Events } from "~/shared/event-emmiter";
 
 export const AuthServiceContainerToken = {
 	AuthService: Symbol.for("AuthService"),
@@ -25,6 +26,12 @@ export class AuthService implements IService {
 	) {
 		this.asyncOperation = new AsyncOperation();
 		this.storage = new LocalStorageCacheStrategy();
+		eventEmitter.on(Events.TOKEN_EXPIRED, () => {
+			const authData = this.storage.get<AuthorizationResponse>(AUTH_STORAGE_KEY);
+			if (authData?.access_token) {
+				this.refreshTokenIfNeeded(authData);
+			}
+		});
 	}
 
 	async initialize(): Promise<void> {}

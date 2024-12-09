@@ -30,7 +30,7 @@ const Home = observer(() => {
 					marginBottom: "1rem",
 				}}
 			>
-				Добро пожаловать {userService.user?.display_name}
+				Добро пожаловать, {userService.user?.display_name}!
 			</h1>
 
 			<p
