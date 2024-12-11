@@ -2,8 +2,14 @@ import { type ComponentType, useEffect, useMemo } from "react";
 import { container } from "~/application/register-dependencies";
 import type { IService } from "../service.interface";
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type Newable<T> = new (...args: any[]) => T;
+interface Abstract<T> {
+	prototype: T;
+}
+type ServiceIdentifier<T = unknown> = string | symbol | Newable<T> | Abstract<T>;
 type Dependencies<T> = {
-	[K in keyof T]: symbol | string | object;
+	[K in keyof T]: ServiceIdentifier<T[K]>;
 };
 
 function hasInitialize(instance: unknown): instance is IService {

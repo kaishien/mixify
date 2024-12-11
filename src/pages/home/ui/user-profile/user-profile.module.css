@@ -1,0 +1,35 @@
+.avatarImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.avatarLetter {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--primary-accent-color);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.userProfileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0;
+  }
+}
+

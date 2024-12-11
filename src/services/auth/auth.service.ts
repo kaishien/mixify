@@ -4,12 +4,12 @@ import type { IService } from "~/config/service.interface";
 import { AuthApi } from "~/shared/api";
 import type { AuthorizationResponse } from "~/shared/api/modules/auth/types";
 import { AUTH_STORAGE_KEY } from "~/shared/constants";
+import { Events, eventEmitter } from "~/shared/event-emmiter";
 import {
-  AsyncOperation,
-  type CacheStrategy,
-  LocalStorageCacheStrategy,
+	AsyncOperation,
+	type CacheStrategy,
+	LocalStorageCacheStrategy,
 } from "~/shared/factories/async-operation";
-import { eventEmitter, Events } from "~/shared/event-emmiter";
 
 export const AuthServiceContainerToken = {
 	AuthService: Symbol.for("AuthService"),
@@ -26,11 +26,16 @@ export class AuthService implements IService {
 	) {
 		this.asyncOperation = new AsyncOperation();
 		this.storage = new LocalStorageCacheStrategy();
+						
 		eventEmitter.on(Events.TOKEN_EXPIRED, () => {
 			const authData = this.storage.get<AuthorizationResponse>(AUTH_STORAGE_KEY);
 			if (authData?.access_token) {
 				this.refreshTokenIfNeeded(authData);
 			}
+		});
+
+		eventEmitter.on(Events.AUTH_ERROR, () => {
+			this.routerService.push("/login");
 		});
 	}
 
@@ -38,10 +43,9 @@ export class AuthService implements IService {
 
 	private async refreshTokenIfNeeded(authData: AuthorizationResponse): Promise<void> {
 		if (!authData.refresh_token) return;
-		const refreshToken = authData.refresh_token;
 
 		const result = await this.asyncOperation.execute(
-			async () => await this.authApi.refreshToken(refreshToken),
+			async () => await this.authApi.refreshToken(authData.refresh_token),
 		);
 
 		this.storage.set(AUTH_STORAGE_KEY, result.data, authData.expires_in * 1000);
@@ -70,6 +74,7 @@ export class AuthService implements IService {
 
 		if (result.isSuccess) {
 			this.routerService.push("/");
+      eventEmitter.emit(Events.AUTH_SUCCESS);
 		}
 	}
 

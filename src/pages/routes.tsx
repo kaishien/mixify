@@ -1,5 +1,6 @@
 import { CallbackPage } from "./auth/callback-page";
 import { HomePage } from "./home";
+import { LoginPage } from "./login";
 
 export const routes = [
 	{
@@ -9,5 +10,9 @@ export const routes = [
 	{
 		path: "/callback",
 		element: <CallbackPage />,
+	},
+	{
+		path: "/login",
+		element: <LoginPage />,
 	},
 ];

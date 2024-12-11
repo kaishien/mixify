@@ -1,7 +1,6 @@
 import { injectable } from "inversify";
 import { AUTH_STORAGE_KEY } from "~/shared/constants";
-import { Events } from "~/shared/event-emmiter";
-import { eventEmitter } from "~/shared/event-emmiter";
+import { Events, eventEmitter } from "~/shared/event-emmiter";
 import { type CacheStrategy, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
 export interface AuthorizationResponse {
 	access_token: string;
@@ -38,6 +37,11 @@ export class HttpClient {
 		if (response.status === 401) {
 			eventEmitter.emit(Events.TOKEN_EXPIRED);
 			throw new Error('Token expired');
+		}
+
+		if (response.status === 403) {
+			eventEmitter.emit(Events.AUTH_ERROR);
+			throw new Error("Auth error");
 		}
 
 		return response.json();
