@@ -7,7 +7,9 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": []
+		"ignore": [
+			"src/shared/api/types/lastfm.types.ts"
+		]
 	},
 	"formatter": {
 		"enabled": true,

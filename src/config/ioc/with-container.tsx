@@ -63,19 +63,15 @@ function DependencyProvider<TDeps extends Record<string, unknown>>({
 	return <>{children}</>;
 }
 
-export function withContainer<TProps extends object, TDeps extends Record<string, unknown>>(
+export const withContainer = <TProps extends object, TDeps extends Record<string, unknown>>(
 	WrappedComponent: ComponentType<TProps>,
 	dependencies: Dependencies<TDeps>,
-) {
-	function EnhancedComponent(props: TProps) {
+) => {
+	return (props: TProps) => {
 		return (
 			<DependencyProvider dependencies={dependencies}>
 				<WrappedComponent {...props} />
 			</DependencyProvider>
 		);
-	}
-
-	EnhancedComponent.displayName = `WithContainer(${WrappedComponent.displayName || WrappedComponent.name})`;
-
-	return EnhancedComponent;
-}
+	};
+};

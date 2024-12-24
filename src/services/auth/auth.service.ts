@@ -26,7 +26,7 @@ export class AuthService implements IService {
 	) {
 		this.asyncOperation = new AsyncOperation();
 		this.storage = new LocalStorageCacheStrategy();
-						
+
 		eventEmitter.on(Events.TOKEN_EXPIRED, () => {
 			const authData = this.storage.get<AuthorizationResponse>(AUTH_STORAGE_KEY);
 			if (authData?.access_token) {

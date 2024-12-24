@@ -14,8 +14,8 @@ const scopes = {
 @injectable()
 export class AuthApi {
 	constructor(
-		@inject(HttpClientToken.Account) private httpClient: HttpClient,
-		@inject(HttpClientToken.Base) private baseClient: HttpClient,
+		@inject(HttpClientToken.SpotifyAccount) private httpClient: HttpClient,
+		@inject(HttpClientToken.SpotifyBase) private baseClient: HttpClient,
 	) {}
 
 	async authorize(): Promise<void> {
@@ -25,26 +25,26 @@ export class AuthApi {
 
 		const params: AuthorizeQueryParams = {
 			response_type: "code",
-			client_id: config.clientId,
+			client_id: config.spotifyClientId,
 			scope,
-			redirect_uri: config.authRedirectUri,
+			redirect_uri: config.spotifyAuthRedirectUri,
 			state,
 		};
 
 		const queryString = new URLSearchParams(params).toString();
-		window.location.href = `${config.accountApiUrl}/authorize?${queryString}`;
+		window.location.href = `${config.spotifyAccountApiUrl}/authorize?${queryString}`;
 	}
 
 	async getAccessTokenFromCode(code: string): Promise<AuthorizationResponse> {
 		const formData = new URLSearchParams();
 		formData.append("grant_type", "authorization_code");
 		formData.append("code", code);
-		formData.append("redirect_uri", config.authRedirectUri);
+		formData.append("redirect_uri", config.spotifyAuthRedirectUri);
 
 		const response = await this.httpClient.post<AuthorizationResponse>("/api/token", formData, {
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
-				Authorization: `Basic ${btoa(`${config.clientId}:${config.clientSecret}`)}`,
+				Authorization: `Basic ${btoa(`${config.spotifyClientId}:${config.spotifyClientSecret}`)}`,
 			},
 		});
 
@@ -61,7 +61,7 @@ export class AuthApi {
 		return this.httpClient.post<AuthorizationResponse>("/api/token", formData, {
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
-				Authorization: `Basic ${btoa(`${config.clientId}:${config.clientSecret}`)}`,
+				Authorization: `Basic ${btoa(`${config.spotifyClientId}:${config.spotifyClientSecret}`)}`,
 			},
 		});
 	}

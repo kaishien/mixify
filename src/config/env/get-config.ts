@@ -1,10 +1,13 @@
 export const getConfig = () => {
 	return {
-		clientId: import.meta.env.VITE_CLIENT_ID,
-		clientSecret: import.meta.env.VITE_CLIENT_SECRET,
-		baseApiUrl: import.meta.env.VITE_BASE_API_URL,
-		accountApiUrl: import.meta.env.VITE_ACCOUNT_API_URL,
-		authRedirectUri: import.meta.env.VITE_AUTH_REDIRECT_URI,
+		spotifyClientId: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
+		spotifyClientSecret: import.meta.env.VITE_SPOTIFY_CLIENT_SECRET,
+		spotifyBaseApiUrl: import.meta.env.VITE_SPOTIFY_BASE_API_URL,
+		spotifyAccountApiUrl: import.meta.env.VITE_SPOTIFY_ACCOUNT_API_URL,
+		spotifyAuthRedirectUri: import.meta.env.VITE_AUTH_REDIRECT_URI,
+		lastFmApiKey: import.meta.env.VITE_LAST_FM_API_KEY,
+		lastFmSharedSecret: import.meta.env.VITE_LAST_FM_SHARED_SECRET,
+		lastFmBaseApiUrl: import.meta.env.VITE_LAST_FM_BASE_API_URL,
 	};
 };
 

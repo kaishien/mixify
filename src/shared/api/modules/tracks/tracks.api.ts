@@ -14,7 +14,7 @@ interface SpotifyTracksResponse {
 
 @injectable()
 export class TracksApi {
-	constructor(@inject(HttpClientToken.Base) private baseClient: HttpClient) {}
+	constructor(@inject(HttpClientToken.SpotifyBase) private baseClient: HttpClient) {}
 
 	async getSavedTracks(limit = 50, offset = 0) {
 		const response = await this.baseClient.get<SpotifyTracksResponse>(

@@ -1,4 +1,6 @@
 export const HttpClientToken = {
-	Base: Symbol.for("BaseHttpClient"),
-	Account: Symbol.for("AccountHttpClient"),
+	SpotifyBase: Symbol.for("SpotifyBaseHttpClient"),
+	SpotifyAccount: Symbol.for("SpotifyAccountHttpClient"),
+	LastFmBase: Symbol.for("LastFmBaseHttpClient"),
 };
+
