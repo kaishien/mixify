@@ -1,4 +1,4 @@
-import { type ComponentType, useEffect, useMemo } from "react";
+import { type ComponentType, useEffect, useMemo, useState } from "react";
 import { container } from "~/application/register-dependencies";
 import type { IService } from "../service.interface";
 
@@ -27,12 +27,12 @@ function DependencyProvider<TDeps extends Record<string, unknown>>({
 	dependencies: Dependencies<TDeps>;
 	children: React.ReactNode;
 }) {
-	const resolvedDependencies = useMemo(() => {
+	const [resolvedDependencies] = useState(() => {
 		return Object.entries(dependencies).reduce((acc, [key, dependencyToken]) => {
 			acc[key as keyof TDeps] = container.get(dependencyToken);
 			return acc;
-		}, {} as TDeps);
-	}, [dependencies]);
+    }, {} as TDeps);
+});
 
 	useEffect(() => {
 		const initializeServices = async () => {
@@ -67,11 +67,15 @@ export const withContainer = <TProps extends object, TDeps extends Record<string
 	WrappedComponent: ComponentType<TProps>,
 	dependencies: Dependencies<TDeps>,
 ) => {
-	return (props: TProps) => {
+	const WithContainer = (props: TProps) => {
 		return (
 			<DependencyProvider dependencies={dependencies}>
 				<WrappedComponent {...props} />
 			</DependencyProvider>
 		);
 	};
+
+	WithContainer.displayName = `WithContainer(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
+
+	return WithContainer;
 };

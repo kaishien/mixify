@@ -1,6 +1,7 @@
 :root {
 	/* Colors */
 	--primary-accent-color: #ff3281;
+	--secondary-accent-color: #fec147;
 	--primary-color: #3498db;
 	--background-color: #fff;
 	--text-color: #333;
@@ -26,9 +27,27 @@
 	--text-rendering: optimizeLegibility;
 	--webkit-font-smoothing: antialiased;
 	--moz-osx-font-smoothing: grayscale;
+
+	--main-regular-font: 'PTSans', sans-serif;
+	--main-bold-font: 'PTSans', sans-serif;
+}
+
+@font-face {
+	font-family: 'PTSans';
+	src: url('./shared/ui/fonts/PTSans-Regular.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'PTSans';
+	src: url('./shared/ui/fonts/PTSans-Bold.ttf') format('truetype');
+	font-weight: 700;
+	font-style: normal;
 }
 
 body {
+	font-family: var(--main-regular-font);
 	background-color: var(--background-color);
 	color: var(--text-color);
 	margin: 0;

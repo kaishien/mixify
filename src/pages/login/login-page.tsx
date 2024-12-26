@@ -3,6 +3,7 @@ import { useInjection } from "~/config";
 import { withContainer } from "~/config/ioc/with-container";
 import { type AuthService, AuthServiceContainerToken } from "~/services/auth";
 import styles from "./login-page.module.css";
+import { Button } from "~/shared/ui/components";
 
 type LoginButtonProps = {
 	onClick: () => void;
@@ -10,9 +11,9 @@ type LoginButtonProps = {
 
 const LoginButton = ({ onClick }: LoginButtonProps) => {
 	return (
-		<button className={styles.loginPage__button} type="button" onClick={onClick}>
+		<Button onClick={onClick}>
 			Login with Spotify
-		</button>
+		</Button>
 	);
 };
 

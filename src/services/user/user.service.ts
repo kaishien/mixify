@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import type { PrivateUser } from "spotify-types";
 import type { IService } from "~/config/service.interface";
 import { UserApi } from "~/shared/api";
@@ -23,7 +23,9 @@ export class UserService implements IService {
 		const result = await this.asyncOperation.execute(async () => await this.userApi.getUser());
 
 		if (result.isSuccess) {
-			this.user = result.data;
+			runInAction(() => {
+				this.user = result.data;
+			});
 		}
 	}
 
