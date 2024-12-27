@@ -37,3 +37,12 @@
 		filter: brightness(110%);
 	}
 }
+
+/* Button Icon */
+
+.buttonIcon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: fit-content;
+}

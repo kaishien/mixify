@@ -22,5 +22,5 @@
 }
 
 .badge--dark {
-	background-color: #424242;
+	background-color: var(--background-color-dark);
 }

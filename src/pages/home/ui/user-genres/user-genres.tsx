@@ -5,9 +5,13 @@ import {
 	type MixGenresService,
 	MixGenresServiceContainerToken,
 } from "../../service/mix-genres.service";
+import { useScrollOverlay } from "./use-scroll-overlay";
+
 import styles from "./user-genres.module.css";
 
 export const UserGenres = observer(() => {
+	const { showTopOverlay, showBottomOverlay, listRef, handleScroll } = useScrollOverlay();
+
 	const mixGenresService = container.get<MixGenresService>(
 		MixGenresServiceContainerToken.MixGenresService,
 	);
@@ -18,8 +22,10 @@ export const UserGenres = observer(() => {
 				Your favorite genres
 			</Typography>
 			<div className={styles.userFavoriteGenres__container}>
-				<div className={styles.userFavoriteGenres__overlay_top} />
-				<ul className={styles.userFavoriteGenres__list}>
+				<div
+					className={`${styles.userFavoriteGenres__overlay_top} ${showTopOverlay ? styles.visible : ""}`}
+				/>
+				<ul className={styles.userFavoriteGenres__list} ref={listRef} onScroll={handleScroll}>
 					{Object.entries(mixGenresService.favoriteListenedGenres).map(([genre, count], i) => (
 						<li key={i} className={styles.userFavoriteGenres__item}>
 							<Badge color="dark">
@@ -29,7 +35,9 @@ export const UserGenres = observer(() => {
 						</li>
 					))}
 				</ul>
-				<div className={styles.userFavoriteGenres__overlay_bottom} />
+				<div
+					className={`${styles.userFavoriteGenres__overlay_bottom} ${showBottomOverlay ? styles.visible : ""}`}
+				/>
 			</div>
 		</div>
 	);

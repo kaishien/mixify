@@ -5,6 +5,12 @@
 	justify-content: space-between;
 }
 
+.userProfileInfoHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .userProfileInfo {
   display: flex;
   flex-direction: column;
