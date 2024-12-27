@@ -2,8 +2,13 @@
 	/* Colors */
 	--primary-accent-color: #ff3281;
 	--secondary-accent-color: #fec147;
-	--primary-color: #3498db;
-	--background-color: #fff;
+	--tertiary-accent-color: #00897b;
+  
+	--color-white: #fff;
+	--color-black: #000;
+
+	--background-color-light: #fff;
+	--background-color-dark: #333;
 	--text-color: #333;
 	--border-color: #ddd;
 
@@ -19,7 +24,7 @@
 	--spacing-lg: 20px;
 
 	/* Fonts */
-	--font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	--font-family: 'PTSans', sans-serif;
 	--line-height: 1.5;
 	--font-weight: 400;
 
@@ -47,8 +52,8 @@
 }
 
 body {
-	font-family: var(--main-regular-font);
-	background-color: var(--background-color);
+	height: 100vh;
+	background-color: var(--background-color-light);
 	color: var(--text-color);
 	margin: 0;
 	padding: 0;

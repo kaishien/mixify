@@ -1,7 +1,23 @@
-.homePage {
-  margin-top: 2rem;
+.homePageContainer {
+  padding-top: 2rem;
+  height: 100vh;
+  background-color: var(--background-color-dark);
 }
 
-.userProfile {
-  width: 20vw;
+.homePage {
+	margin-top: 2rem;
+}
+
+.userProfile, .userFavoriteArtists {
+	width: 20vw;
+}
+
+.homePage__top,
+.homePage__bottom {
+	display: flex;
+	gap: var(--spacing-md);
+}
+
+.userGenres, .generatePlaylist {
+	width: 100%;
 }

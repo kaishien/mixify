@@ -1,0 +1,46 @@
+.typography {
+	font-family: var(--main-regular-font);
+	font-size: 14px;
+	line-height: 1.2;
+	margin: 0;
+}
+
+.typography--weight-bold {
+	font-family: var(--main-bold-font);
+}
+
+.typography--color-dark {
+	color: #323232;
+}
+
+.typography--color-light {
+	color: #fff;
+}
+
+.typography--color-gray {
+	color: #808080;
+}
+
+.typography--tag-h1 {
+	font-size: 24px;
+}
+
+.typography--tag-h2 {
+	font-size: 18px;
+}
+
+.typography--tag-h3 {
+	font-size: 16px;
+}
+
+.typography--tag-h4 {
+	font-size: 16px;
+}
+
+.typography--tag-h5 {
+	font-size: 14px;
+}
+
+.typography--tag-h6 {
+	font-size: 12px;
+}

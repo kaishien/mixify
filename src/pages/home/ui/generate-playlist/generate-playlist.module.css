@@ -1,0 +1,10 @@
+.generatePlaylistContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.generatePlaylistContainer__button {
+  width: 250px
+}

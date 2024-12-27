@@ -5,8 +5,9 @@ import styles from "./panel.module.css";
 type PanelProps = {
 	children: ReactNode;
 	className?: string;
+	padding?: "lg" | "md" | "sm";
 };
 
-export const Panel = ({ children, className }: PanelProps) => {
-	return <div className={clsx(styles.panel, className)}>{children}</div>;
+export const Panel = ({ children, className, padding = "md" }: PanelProps) => {
+	return <div className={clsx(styles.panel, className, styles[`panel--${padding}`])}>{children}</div>;
 };

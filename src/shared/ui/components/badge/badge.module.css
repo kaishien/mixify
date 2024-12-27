@@ -1,0 +1,26 @@
+.badge {
+	font-family: var(--main-bold-font);
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-white);
+	background-color: var(--secondary-accent-color);
+	padding: var(--spacing-sm) var(--spacing-md);
+	border-radius: var(--border-radius-sm);
+  width: fit-content;
+}
+
+.badge--primary {
+	background-color: var(--primary-accent-color);
+}
+
+.badge--secondary {
+	background-color: var(--secondary-accent-color);
+}
+
+.badge--tertiary {
+	background-color: var(--tertiary-accent-color);
+}
+
+.badge--dark {
+	background-color: #424242;
+}

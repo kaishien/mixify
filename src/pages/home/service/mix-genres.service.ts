@@ -4,8 +4,7 @@ import type { Artist, Track } from "spotify-types";
 import type { IService } from "~/config/service.interface";
 import { type UserService, UserServiceContainerToken } from "~/services/user";
 import type { lastFmTypes } from "~/shared/api";
-import { ArtistApi, PlaylistsApi, TracksApi } from "~/shared/api";
-import { RecommendationsApi } from "~/shared/api/modules/recommendations/recommendations.api";
+import { ArtistApi, PlaylistsApi, TracksApi, RecommendationsApi } from "~/shared/api";
 import { SearchApi } from "~/shared/api/modules/search";
 import { AsyncOperation, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
 
@@ -29,7 +28,8 @@ export class MixGenresService implements IService {
   favoritesTracks: Track[] = [];
   uniqueArtistsFromFavoritesTracks: Map<Artist["id"], Artist> = new Map();
   listenGenres: string[] = [];
-  countListenGenres: Record<string, number> = {};
+  favoriteListenedGenres: Record<string, number> = {};
+  favoritesListenedArtists: string[] = [];
   genresArtists: Map<Artist["name"], Artist["genres"]> = new Map();
 
   private asyncOperation: AsyncOperation;
@@ -63,6 +63,7 @@ export class MixGenresService implements IService {
       () => this.listenGenres,
       () => {
         this.calculateCountListenGenres();
+        this.calculateFavoritesListenedArtists();
       },
     );
   }
@@ -71,8 +72,8 @@ export class MixGenresService implements IService {
     this.listenGenres = listenGenres;
   }
 
-  private updateCountListenGenres(countListenGenres: Record<string, number>) {
-    this.countListenGenres = countListenGenres;
+  private updateFavoriteListenedGenres(favoriteListenedGenres: Record<string, number>) {
+    this.favoriteListenedGenres = favoriteListenedGenres;
   }
 
   private updateGenresArtists(artist: Artist) {
@@ -87,6 +88,10 @@ export class MixGenresService implements IService {
 
   private updateUniqueArtistsFromFavoritesTracks(artists: Map<Artist["id"], Artist>) {
     this.uniqueArtistsFromFavoritesTracks = artists;
+  }
+
+  private updateFavoritesListenedArtists(artists: string[]) {
+    this.favoritesListenedArtists = artists;
   }
 
   get mapFavoriteTracksWithArtist(): TrackWithArtist[] {
@@ -228,7 +233,20 @@ export class MixGenresService implements IService {
       ([, countA], [, countB]) => countB - countA,
     );
 
-    this.updateCountListenGenres(Object.fromEntries(sortedEntries));
+    this.updateFavoriteListenedGenres(Object.fromEntries(sortedEntries));
+  }
+
+  private calculateFavoritesListenedArtists() {
+    const favoritesListenedArtists = this.favoritesTracks.reduce((acc, track) => {
+      for (const artist of track.artists) {
+        acc.set(artist.name, (acc.get(artist.name) || 0) + 1);
+      }
+      return acc;
+    }, new Map<string, number>());
+
+    const sortedEntries = Array.from(favoritesListenedArtists.entries()).sort(([, countA], [, countB]) => countB - countA);
+
+    this.updateFavoritesListenedArtists(sortedEntries.map(([artist]) => artist));
   }
 
   private saveUniqueArtistsFromFavoritesTracks() {
