@@ -4,7 +4,8 @@ import { RouterService } from "~/config/router/router-service";
 import { MixGenresService, MixGenresServiceContainerToken } from "~/pages/home/service/mix-genres.service";
 import { AuthService, AuthServiceContainerToken } from "~/services/auth";
 import { UserService, UserServiceContainerToken } from "~/services/user";
-import { ArtistApi, AuthApi, PlaylistsApi, TracksApi, UserApi, RecommendationsApi, SearchApi } from "~/shared/api";
+import { ArtistApi, AuthApi, PlaylistsApi, RecommendationsApi, SearchApi, TracksApi, UserApi } from "~/shared/api";
+import { LoaderProcessor, LoaderProcessorDIToken } from "~/shared/lib/loader-processor";
 import { ApplicationService } from "./application.service";
 
 const container = new Container();
@@ -25,6 +26,8 @@ container
 container.bind<HttpClient>(HttpClientToken.LastFmBase)
 	.toDynamicValue(() => new HttpClient(config.lastFmBaseApiUrl))
 	.inSingletonScope();
+
+container.bind<LoaderProcessor>(LoaderProcessorDIToken).to(LoaderProcessor).inSingletonScope();
 
 const registryServices = () => {
 	container.bind(AuthServiceContainerToken.AuthService).to(AuthService).inSingletonScope();
