@@ -17,12 +17,12 @@ export const UserFavoriteArtists = observer(() => {
 
 	return (
 		<div className={styles.userFavoriteArtists}>
-			<Typography tag="h2">Your favorite artists</Typography>
+			<Typography weight="bold" tag="h2">Your favorite artists</Typography>
 			<ul className={styles.userFavoriteArtists__list}>
 				{top20Artists.map((artist, i) => (
 					<li key={i} className={styles.userFavoriteArtists__item}>
 						<Avatar size="small" src={artist.image} alt={artist.name} />
-						{artist.name}
+						<Typography weight="normal" tag="h5">{artist.name}</Typography>
 					</li>
 				))}
 			</ul>

@@ -9,7 +9,7 @@ export const UserGenres = observer(() => {
 
 	return (
 		<div className={styles.userFavoriteGenres}>
-			<Typography tag="h2">Your favorite genres</Typography>
+			<Typography weight="bold" tag="h2">Your favorite genres</Typography>
 			<ul className={styles.userFavoriteGenres__list}>
 				{Object.entries(mixGenresService.favoriteListenedGenres).map(([genre, count], i) => (
 					<li key={i} className={styles.userFavoriteGenres__item}>

@@ -10,7 +10,7 @@
   flex-direction: column;
   list-style: none;
   padding: 0 16px;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
 }
 
 .userFavoriteArtists__item{

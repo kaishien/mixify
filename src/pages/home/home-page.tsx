@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { withContainer } from "~/config";
 import { UserServiceContainerToken } from "~/services/user";
-import { Container, Panel } from "~/shared/ui/components";
+import { Container, Panel, VinylLoader } from "~/shared/ui/components";
 import { UserProfile } from "./ui/user-profile";
 
 import { AuthServiceContainerToken } from "~/services/auth";
