@@ -10,4 +10,11 @@
   flex-direction: column;
   list-style: none;
   padding: 0 16px;
+  gap: var(--spacing-xs);
+}
+
+.userFavoriteArtists__item{
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }

@@ -23,14 +23,20 @@ interface SimilarTrackInfo {
   artist: string;
 }
 
+interface FavoritesArtists {
+  name: string;
+  image: string;
+  id: string;
+}
+
 @injectable()
 export class MixGenresService implements IService {
   favoritesTracks: Track[] = [];
   uniqueArtistsFromFavoritesTracks: Map<Artist["id"], Artist> = new Map();
   listenGenres: string[] = [];
   favoriteListenedGenres: Record<string, number> = {};
-  favoritesListenedArtists: string[] = [];
-  genresArtists: Map<Artist["name"], Artist["genres"]> = new Map();
+  favoritesListenedArtists: FavoritesArtists[] = [];
+  favoriteArtists: Map<Artist["name"], Artist> = new Map();
 
   private asyncOperation: AsyncOperation;
   private localStorageStorage: LocalStorageCacheStrategy;
@@ -76,10 +82,10 @@ export class MixGenresService implements IService {
     this.favoriteListenedGenres = favoriteListenedGenres;
   }
 
-  private updateGenresArtists(artist: Artist) {
-    const map = new Map(this.genresArtists);
-    map.set(artist.name, artist.genres);
-    this.genresArtists = map;
+  private updateFavoriteArtists(artist: Artist) {
+    const map = new Map(this.favoriteArtists);
+    map.set(artist.name, artist);
+    this.favoriteArtists = map;
   }
 
   private updateFavoritesTracks(tracks: Track[]) {
@@ -90,7 +96,7 @@ export class MixGenresService implements IService {
     this.uniqueArtistsFromFavoritesTracks = artists;
   }
 
-  private updateFavoritesListenedArtists(artists: string[]) {
+  private updateFavoritesListenedArtists(artists: FavoritesArtists[]) {
     this.favoritesListenedArtists = artists;
   }
 
@@ -98,7 +104,7 @@ export class MixGenresService implements IService {
     return this.favoritesTracks.map((track) => ({
       track: track.name,
       artist: track.artists[0].name,
-      genres: this.genresArtists.get(track.artists[0].name),
+      genres: this.favoriteArtists.get(track.artists[0].name)?.genres,
     }));
   }
 
@@ -239,14 +245,26 @@ export class MixGenresService implements IService {
   private calculateFavoritesListenedArtists() {
     const favoritesListenedArtists = this.favoritesTracks.reduce((acc, track) => {
       for (const artist of track.artists) {
-        acc.set(artist.name, (acc.get(artist.name) || 0) + 1);
+        acc.set(artist.id, {
+          count: (acc.get(artist.id)?.count || 0) + 1,
+          name: artist.name,
+          image: this.favoriteArtists.get(artist.name)?.images?.[2]?.url || '',
+          id: artist.id,
+        });
       }
       return acc;
-    }, new Map<string, number>());
+    }, new Map<string, { count: number; name: string; image: string; id: string }>());
 
-    const sortedEntries = Array.from(favoritesListenedArtists.entries()).sort(([, countA], [, countB]) => countB - countA);
+    const sortedEntries = Array.from(favoritesListenedArtists.entries())
+      .sort(([, a], [, b]) => b.count - a.count);
 
-    this.updateFavoritesListenedArtists(sortedEntries.map(([artist]) => artist));
+    this.updateFavoritesListenedArtists(
+      sortedEntries.map(([, data]) => ({
+        name: data.name,
+        image: data.image,
+        id: data.id,
+      }))
+    );
   }
 
   private saveUniqueArtistsFromFavoritesTracks() {
@@ -288,7 +306,7 @@ export class MixGenresService implements IService {
             this.updateListenGenres(genres);
 
             for (const artist of artists) {
-              this.updateGenresArtists(artist);
+              this.updateFavoriteArtists(artist);
             }
           }
         },
