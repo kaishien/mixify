@@ -14,10 +14,22 @@ import { UserGenres } from "./ui/user-genres/user-genres";
 
 const PageLoader = observer(() => {
 	const loaderProcessor = useInjection<LoaderProcessor>(LoaderProcessorDIToken);
+	const text = loaderProcessor.loadingStatus;
 
 	return (
 		<div className={styles.loaderContainer}>
-			<div className={styles.loaderContainer__text}>{loaderProcessor.loadingStatus}</div>
+			<div className={styles.loaderContainer__text}>
+				{text.split('').map((char, index) => (
+					<span
+						key={index}
+						style={{
+							animationDelay: `${index * 50}ms`
+						}}
+					>
+						{char}
+					</span>
+				))}
+			</div>
 			<div className={styles.loaderContainer__vinylLoader}>
 				<VinylLoader />
 			</div>
