@@ -45,4 +45,10 @@
   border: none;
   cursor: pointer;
   width: fit-content;
+  transition: filter 0.2s ease-out;
+
+  &:hover {
+    transition: filter 0.2s ease-out;
+    filter: opacity(0.5);
+  }
 }
