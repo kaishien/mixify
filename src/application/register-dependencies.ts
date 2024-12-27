@@ -4,10 +4,8 @@ import { RouterService } from "~/config/router/router-service";
 import { MixGenresService, MixGenresServiceContainerToken } from "~/pages/home/service/mix-genres.service";
 import { AuthService, AuthServiceContainerToken } from "~/services/auth";
 import { UserService, UserServiceContainerToken } from "~/services/user";
-import { ArtistApi, AuthApi, PlaylistsApi, TracksApi, UserApi } from "~/shared/api";
+import { ArtistApi, AuthApi, PlaylistsApi, TracksApi, UserApi, RecommendationsApi, SearchApi } from "~/shared/api";
 import { ApplicationService } from "./application.service";
-import { RecommendationsApi } from "~/shared/api/modules/recommendations/recommendations.api";
-import { SearchApi } from "~/shared/api/modules/search";
 
 const container = new Container();
 

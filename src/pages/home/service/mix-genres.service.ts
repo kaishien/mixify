@@ -7,6 +7,7 @@ import type { lastFmTypes } from "~/shared/api";
 import { ArtistApi, PlaylistsApi, TracksApi, RecommendationsApi } from "~/shared/api";
 import { SearchApi } from "~/shared/api/modules/search";
 import { AsyncOperation, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
+import { chunkArray, shuffleArray } from "~/shared/lib/collection";
 
 export const MixGenresServiceContainerToken = {
   MixGenresService: Symbol("MixGenresService"),
@@ -205,7 +206,7 @@ export class MixGenresService implements IService {
       );
     }
 
-    return this.shuffleArray(trackUrls).slice(0, 100);
+    return shuffleArray(trackUrls).slice(0, 100);
   }
 
   private async createAndFillPlaylist(trackUris: string[], playlistConfig: {
@@ -293,7 +294,7 @@ export class MixGenresService implements IService {
 
   private async fetchArtistGenres() {
     const artistIds = Array.from(this.uniqueArtistsFromFavoritesTracks.keys());
-    const chunks = this.chunkArray(artistIds, 50);
+    const chunks = chunkArray(artistIds, 50);
 
     for (const chunk of chunks) {
       await this.asyncOperation.execute(async () => await this.artistApi.getSeveralArtists(chunk), {
@@ -312,21 +313,5 @@ export class MixGenresService implements IService {
         },
       });
     }
-  }
-
-  private chunkArray<T>(array: T[], size: number): T[][] {
-    const chunks: T[][] = [];
-    for (let i = 0; i < array.length; i += size) {
-      chunks.push(array.slice(i, i + size));
-    }
-    return chunks;
-  }
-
-  private shuffleArray<T>(array: T[]) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
   }
 }
