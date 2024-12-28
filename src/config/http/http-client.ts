@@ -96,6 +96,10 @@ export class HttpClient {
 	async put<T, U>(url: string, body: U, options?: RequestInit): Promise<T> {
 		const response = await fetch(`${this.baseURL}${url}`, {
 			method: "PUT",
+			headers: {
+				'Authorization': `Bearer ${this.accessToken}`,
+				...options?.headers,
+			},
 			body: JSON.stringify(body),
 			...options,
 		});
@@ -103,9 +107,14 @@ export class HttpClient {
 		return response.json();
 	}
 
-	async delete<T>(url: string): Promise<T> {
+	async delete<T>(url: string, options?: RequestInit): Promise<T> {
 		const response = await fetch(`${this.baseURL}${url}`, {
+			headers: {
+				'Authorization': `Bearer ${this.accessToken}`,
+				...options?.headers,
+			},
 			method: "DELETE",
+			...options,
 		});
 
 		return response.json();

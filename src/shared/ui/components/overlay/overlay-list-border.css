@@ -1,0 +1,36 @@
+.overlay_top,
+.overlay_bottom {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 20px;
+	pointer-events: none;
+	z-index: 1;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+}
+
+.overlay_top {
+	top: -1px;
+	background: linear-gradient(
+		to bottom,
+		#f5f5f5,
+		rgba(255, 255, 255, 0.6) 20%,
+		rgba(255, 255, 255, 0) 50%
+	);
+}
+
+.overlay_bottom {
+	bottom: -1px;
+	background: linear-gradient(
+		to top,
+		#f5f5f5 0%,
+		rgba(255, 255, 255, 0.6) 20%,
+		rgba(255, 255, 255, 0) 50%
+	);
+}
+
+.overlay_top.visible,
+.overlay_bottom.visible {
+	opacity: 1;
+}

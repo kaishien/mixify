@@ -3,7 +3,7 @@
 	--primary-accent-color: #ff3281;
 	--secondary-accent-color: #fec147;
 	--tertiary-accent-color: #00897b;
-  
+
 	--color-white: #fff;
 	--color-black: #000;
 
@@ -14,7 +14,6 @@
 
 	--bg-panel-color: #f5f5f5;
 
-
 	--border-radius-md: 10px;
 	--border-radius-sm: 5px;
 	--border-radius-lg: 20px;
@@ -24,7 +23,7 @@
 	--spacing-lg: 20px;
 
 	/* Fonts */
-	--font-family: 'PTSans', sans-serif;
+	--font-family: "PTSans", sans-serif;
 	--line-height: 1.5;
 	--font-weight: 400;
 
@@ -33,20 +32,22 @@
 	--webkit-font-smoothing: antialiased;
 	--moz-osx-font-smoothing: grayscale;
 
-	--main-regular-font: 'PTSans', sans-serif;
-	--main-bold-font: 'PTSans', sans-serif;
+	--main-regular-font: "PTSans", sans-serif;
+	--main-bold-font: "PTSans", sans-serif;
+
+	--focus-ring-color: var(--secondary-accent-color);
 }
 
 @font-face {
-	font-family: 'PTSans';
-	src: url('./shared/ui/fonts/PTSans-Regular.ttf') format('truetype');
+	font-family: "PTSans";
+	src: url("./shared/ui/fonts/PTSans-Regular.ttf") format("truetype");
 	font-weight: 400;
 	font-style: normal;
 }
 
 @font-face {
-	font-family: 'PTSans';
-	src: url('./shared/ui/fonts/PTSans-Bold.ttf') format('truetype');
+	font-family: "PTSans";
+	src: url("./shared/ui/fonts/PTSans-Bold.ttf") format("truetype");
 	font-weight: 700;
 	font-style: normal;
 }
@@ -60,4 +61,15 @@ body {
 	font-family: var(--font-family);
 	line-height: var(--line-height);
 	font-weight: var(--font-weight);
+}
+
+* {
+	box-sizing: border-box;
+	outline: none;
+}
+
+*:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 2px var(--bg-panel-color), 0 0 0 4px var(--focus-ring-color);
+	border-radius: var(--border-radius-sm);
 }

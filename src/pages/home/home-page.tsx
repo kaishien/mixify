@@ -3,27 +3,27 @@ import { useInjection, withContainer } from "~/config";
 import { UserServiceContainerToken } from "~/services/user";
 import { Container, Panel, VinylLoader } from "~/shared/ui/components";
 import { UserProfile } from "./ui/user-profile";
+import { WebPlayback } from "./ui/web-playback/web-playback";
 
 import { AuthServiceContainerToken } from "~/services/auth";
-import { type LoaderProcessor, LoaderProcessorDIToken } from "~/shared/lib/loader-processor";
 import styles from "./home-page.module.css";
-import { MixGenresServiceContainerToken } from "./service/mix-genres.service";
+import { type MixGenresService, MixGenresServiceContainerToken } from "./service/mix-genres.service";
 import { GeneratePlaylist } from "./ui/generate-playlist/generate-playlist";
 import { UserFavoriteArtists } from "./ui/user-favorite-artists/user-favorite-artists";
 import { UserGenres } from "./ui/user-genres/user-genres";
 
 const PageLoader = observer(() => {
-	const loaderProcessor = useInjection<LoaderProcessor>(LoaderProcessorDIToken);
-	const text = loaderProcessor.loadingStatus;
+	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken.MixGenresService);
+	const text = mixGenresService.initialLoadingData.loadingStatus;
 
 	return (
 		<div className={styles.loaderContainer}>
 			<div className={styles.loaderContainer__text}>
-				{text.split('').map((char, index) => (
+				{text.split("").map((char, index) => (
 					<span
 						key={index}
 						style={{
-							animationDelay: `${index * 50}ms`
+							animationDelay: `${index * 50}ms`,
 						}}
 					>
 						{char}
@@ -38,9 +38,9 @@ const PageLoader = observer(() => {
 });
 
 const Home = observer(() => {
-	const loaderProcessor = useInjection<LoaderProcessor>(LoaderProcessorDIToken);
+	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken.MixGenresService);
 
-	if (loaderProcessor.isLoading) {
+	if (mixGenresService.initialLoadingData.isLoading) {
 		return <PageLoader />;
 	}
 
@@ -63,6 +63,11 @@ const Home = observer(() => {
 						<GeneratePlaylist />
 					</Panel>
 				</div>
+				<div className={styles.webPlayback}>
+					<Panel padding="lg">
+						<WebPlayback />
+					</Panel>
+				</div>
 			</Container>
 		</div>
 	);
@@ -72,5 +77,4 @@ export const HomePage = withContainer(Home, {
 	userService: UserServiceContainerToken.UserService,
 	authService: AuthServiceContainerToken.AuthService,
 	mixGenresService: MixGenresServiceContainerToken.MixGenresService,
-	loaderProcessor: LoaderProcessorDIToken,
 });

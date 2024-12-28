@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { makeAutoObservable } from "mobx";
 import { RouterService } from "~/config";
 import type { IService } from "~/config/service.interface";
 import { AuthApi } from "~/shared/api";
@@ -24,6 +25,7 @@ export class AuthService implements IService {
 		@inject(AuthApi) private readonly authApi: AuthApi,
 		@inject(RouterService) private readonly routerService: RouterService,
 	) {
+		makeAutoObservable(this);
 		this.asyncOperation = new AsyncOperation();
 		this.storage = new LocalStorageCacheStrategy();
 
@@ -39,7 +41,11 @@ export class AuthService implements IService {
 		});
 	}
 
-	async initialize(): Promise<void> {}
+	getToken(): string {
+		return this.storage.get<AuthorizationResponse>(AUTH_STORAGE_KEY)?.access_token ?? "";
+	}
+
+	async initialize(): Promise<void> { }
 
 	private async refreshTokenIfNeeded(authData: AuthorizationResponse): Promise<void> {
 		if (!authData.refresh_token) return;
@@ -74,7 +80,7 @@ export class AuthService implements IService {
 
 		if (result.isSuccess) {
 			this.routerService.push("/");
-      eventEmitter.emit(Events.AUTH_SUCCESS);
+			eventEmitter.emit(Events.AUTH_SUCCESS);
 		}
 	}
 

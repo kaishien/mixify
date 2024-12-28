@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
+import "./overlay-list-border.css";
+
 export const useScrollOverlay = () => {
 	const [showTopOverlay, setShowTopOverlay] = useState(false);
 	const [showBottomOverlay, setShowBottomOverlay] = useState(false);

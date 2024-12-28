@@ -1,9 +1,5 @@
-import { injectable } from "inversify";
 import { makeAutoObservable } from "mobx";
 
-export const LoaderProcessorDIToken = Symbol("LoaderProcessor");
-
-@injectable()
 export class LoaderProcessor {
   isLoading = false;
   loadingStatus = "";

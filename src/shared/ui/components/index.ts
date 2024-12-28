@@ -7,3 +7,4 @@ export { VinylLoader } from "./loader/vinyl-loader";
 export { Panel } from "./panel/panel";
 export { Typography } from "./typography/typography";
 
+export { useScrollOverlay } from './overlay/use-scroll-overlay';

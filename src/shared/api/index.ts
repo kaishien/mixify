@@ -5,6 +5,6 @@ export * from "./modules/tracks";
 export * from "./modules/user";
 export * from "./modules/recommendations";
 export * from "./modules/search";
-
+export * from "./modules/player";
 
 export * as lastFmTypes from "./types/lastfm.types";
