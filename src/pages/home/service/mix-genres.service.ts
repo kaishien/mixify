@@ -65,8 +65,6 @@ export class MixGenresService implements IService {
     @inject(TracksApi) private tracksApi: TracksApi,
     @inject(RecommendationsApi) private recommendationsApi: RecommendationsApi,
     @inject(SearchApi) private searchApi: SearchApi,
-    @inject(PlaylistsApi) private playlistsApi: PlaylistsApi,
-    @inject(UserServiceContainerToken.UserService) private userService: UserService,
     @inject(MixedPlaylistServiceContainerToken) private mixedPlaylistService: MixedPlaylistService,
   ) {
     makeAutoObservable(this);
@@ -134,10 +132,7 @@ export class MixGenresService implements IService {
     }
   }
 
-  async createMixPlaylist(playlistConfig: {
-    name: string;
-    description: string;
-  }) {
+  async createMixPlaylist() {
     this.mixifyLoadingData.setIsLoading(true);
 
     try {
@@ -160,7 +155,7 @@ export class MixGenresService implements IService {
       }
 
       this.mixedPlaylistService.updateMixedPlaylist(mixedTracks);
-      // await this.createAndFillPlaylist(trackUris, playlistConfig);
+
     } catch (error) {
       console.error("Error creating mix playlist:", error);
       throw error;
@@ -231,26 +226,6 @@ export class MixGenresService implements IService {
     }
 
     return shuffleArray(mixedTracks).slice(0, 100);
-  }
-
-  private async createAndFillPlaylist(
-    trackUris: string[],
-    playlistConfig: {
-      name: string;
-      description: string;
-    },
-  ) {
-    const userId = this.userService.user?.id;
-    if (!userId) return;
-
-    const createdPlaylist = await this.playlistsApi.createPlaylist(
-      userId,
-      playlistConfig.name,
-      playlistConfig.description,
-      true,
-    );
-
-    await this.playlistsApi.addTracksToPlaylist(createdPlaylist.id, trackUris);
   }
 
   private calculateCountListenGenres() {

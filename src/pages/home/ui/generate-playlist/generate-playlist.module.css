@@ -16,6 +16,15 @@
   justify-content: center;
 }
 
+.generatedPlaylist__addButton {
+  width: 150px;
+}
+
+.generatedPlaylist__controls {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
 .generatedPlaylist {
   width: 100%;
   height: 100%;
@@ -54,7 +63,7 @@
   overflow-y: auto;
   padding: 0;
   margin: 0;
-  max-height: 400px;
+  max-height: 558px;
   list-style: none;
   
   scrollbar-width: thin;
@@ -100,8 +109,13 @@
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: var(--border-radius-md);
-  background-color: var(--secondary-accent-color);
+  border-radius: var(--border-radius-sm);
+  background: linear-gradient(
+    to right,
+    rgba(254, 193, 71, 0.493) 0%,
+    rgba(223, 166, 50, 0.389) 40%,
+    rgba(228, 157, 16, 0.704) 100%
+  );
   opacity: 0;
   transition: opacity 0.2s ease-out;
   z-index: -1;
@@ -114,7 +128,7 @@
 
 .track__button:hover::before,
 .track__button:focus::before {
-  opacity: 0.1;
+  opacity: 1;
 }
 
 .track__button:focus-visible {
@@ -124,7 +138,7 @@
 }
 
 .track__button:focus-visible::before {
-	opacity: 0.1;
+	opacity: 1;
 }
 
 .track__index {
@@ -137,7 +151,7 @@
 .track__cover {
   width: 40px;
   height: 40px;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-sm);
   object-fit: cover;
 }
 

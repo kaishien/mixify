@@ -1,4 +1,5 @@
 import { useRoutes } from "react-router-dom";
+import { Toaster } from "sonner";
 import { IocProvider, withContainer } from "../config";
 import { BrowserRouter } from "../config/router/browser-router.tsx";
 import { history } from "../config/router/history.ts";
@@ -14,6 +15,7 @@ const ApplicationProvider = () => {
 			<BrowserRouter window={window} history={history} basename="/">
 				<AppRoutes />
 			</BrowserRouter>
+			<Toaster expand />
 		</IocProvider>
 	);
 };

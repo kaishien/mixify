@@ -3,15 +3,44 @@
 	color: #fff;
 	border: none;
 	border-radius: 24px;
-	padding: 12px 24px;
-	font-size: 16px;
 	font-weight: 600;
 	font-family: var(--main-bold-font);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-  &:active {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+	&:active {
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+}
+
+.button--small {
+	padding: 8px 16px;
+	font-size: 14px;
+	gap: 4px;
+	max-height: 32px;
+
+	svg {
+		width: 16px;
+		height: 16px;
+	}
+
+	.spinner {
+		width: 16px;
+		height: 16px;
+	}
+}
+
+.button--medium {
+	padding: 12px 24px;
+	font-size: 16px;
+	gap: 6px;
+
+	svg {
+		width: 20px;
+		height: 20px;
+	}
 }
 
 .button--secondary {
@@ -38,17 +67,26 @@
 	}
 }
 
+.button--dark {
+	background-color: var(--background-color-dark);
+	color: var(--color-white);
+
+	&:hover {
+		filter: brightness(110%);
+	}
+}
+
 /* Button Icon */
 
 .buttonIcon {
-  background: none;
-  border: none;
-  cursor: pointer;
-  width: fit-content;
-  transition: filter 0.2s ease-out;
+	background: none;
+	border: none;
+	cursor: pointer;
+	width: fit-content;
+	transition: filter 0.2s ease-out;
 
-  &:hover {
-    transition: filter 0.2s ease-out;
-    filter: opacity(0.5);
-  }
+	&:hover {
+		transition: filter 0.2s ease-out;
+		filter: opacity(0.5);
+	}
 }

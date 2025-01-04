@@ -7,6 +7,8 @@ import { AuthService, AuthServiceContainerToken } from "~/services/auth";
 import { UserService, UserServiceContainerToken } from "~/services/user";
 import { ArtistApi, AuthApi, PlayerApi, PlaylistsApi, RecommendationsApi, SearchApi, TracksApi, UserApi } from "~/shared/api";
 import { ApplicationService } from "./application.service";
+import { type INotificationService, NotificationServiceToken } from "~/services/notification";
+import { NotificationService } from "~/services/notification";
 
 const container = new Container();
 
@@ -27,6 +29,8 @@ container.bind<HttpClient>(HttpClientToken.LastFmBase)
 	.toDynamicValue(() => new HttpClient(config.lastFmBaseApiUrl))
 	.inSingletonScope();
 
+container.bind<INotificationService>(NotificationServiceToken).to(NotificationService).inSingletonScope();	
+
 const registryServices = () => {
 	container.bind(AuthServiceContainerToken.AuthService).to(AuthService).inSingletonScope();
 	container.bind(UserServiceContainerToken.UserService).to(UserService).inSingletonScope();
@@ -34,7 +38,12 @@ const registryServices = () => {
 	container
 		.bind<MixedPlaylistService>(MixedPlaylistServiceContainerToken)
 		.toDynamicValue(() => {
-			return new MixedPlaylistService(container.get(PlayerApi));
+			return new MixedPlaylistService(
+				container.get(PlayerApi), 
+				container.get(UserServiceContainerToken.UserService),
+				container.get(PlaylistsApi),
+				container.get(NotificationServiceToken),
+			);
 		})
 		.inSingletonScope();
 };
