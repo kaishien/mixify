@@ -20,6 +20,6 @@ const ApplicationProvider = () => {
 	);
 };
 
-export const Application = withContainer(ApplicationProvider, {
-	applicationService: ApplicationService,
-});
+export const Application = withContainer(ApplicationProvider, [
+	ApplicationService,
+]);

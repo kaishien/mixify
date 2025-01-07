@@ -21,6 +21,6 @@ export const CallbackAuth = () => {
 	return null;
 };
 
-export const CallbackPage = withContainer(CallbackAuth, {
-	authService: AuthServiceContainerToken.AuthService,
-});
+export const CallbackPage = withContainer(CallbackAuth, [
+	AuthServiceContainerToken.AuthService,
+]);

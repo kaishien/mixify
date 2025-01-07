@@ -1,16 +1,10 @@
-import { type ComponentType, useEffect, useMemo, useState } from "react";
+import type { interfaces } from "inversify";
+import type React from "react";
+import { type ComponentType, useEffect, useState } from "react";
 import { container } from "~/application/register-dependencies";
 import type { IService } from "../service.interface";
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-type Newable<T> = new (...args: any[]) => T;
-interface Abstract<T> {
-	prototype: T;
-}
-type ServiceIdentifier<T = unknown> = string | symbol | Newable<T> | Abstract<T>;
-type Dependencies<T> = {
-	[K in keyof T]: ServiceIdentifier<T[K]>;
-};
+type ServiceIdentifier<T = unknown> = interfaces.ServiceIdentifier<T>;
 
 function hasInitialize(instance: unknown): instance is IService {
 	return typeof instance === "object" && instance !== null && "initialize" in instance;
@@ -20,25 +14,22 @@ function hasCleanup(instance: unknown): instance is IService {
 	return typeof instance === "object" && instance !== null && "cleanup" in instance;
 }
 
-function DependencyProvider<TDeps extends Record<string, unknown>>({
+function DependencyProvider({
 	dependencies,
 	children,
 }: {
-	dependencies: Dependencies<TDeps>;
+	dependencies: ServiceIdentifier[];
 	children: React.ReactNode;
 }) {
 	const [resolvedDependencies] = useState(() => {
-		return Object.entries(dependencies).reduce((acc, [key, dependencyToken]) => {
-			acc[key as keyof TDeps] = container.get(dependencyToken);
-			return acc;
-    }, {} as TDeps);
-});
+		return dependencies.map((dependencyToken) => container.get(dependencyToken));
+	});
 
 	useEffect(() => {
 		const initializeServices = async () => {
 			try {
 				await Promise.all(
-					Object.values(resolvedDependencies).map(async (instance) => {
+					resolvedDependencies.map(async (instance) => {
 						if (hasInitialize(instance)) {
 							await instance.initialize?.();
 						}
@@ -52,7 +43,7 @@ function DependencyProvider<TDeps extends Record<string, unknown>>({
 		initializeServices();
 
 		return () => {
-			for (const instance of Object.values(resolvedDependencies)) {
+			for (const instance of resolvedDependencies) {
 				if (hasCleanup(instance)) {
 					instance.cleanup?.();
 				}
@@ -63,19 +54,23 @@ function DependencyProvider<TDeps extends Record<string, unknown>>({
 	return <>{children}</>;
 }
 
-export const withContainer = <TProps extends object, TDeps extends Record<string, unknown>>(
+function ContainerHOC<TProps extends object>(
 	WrappedComponent: ComponentType<TProps>,
-	dependencies: Dependencies<TDeps>,
-) => {
-	const WithContainer = (props: TProps) => {
+	dependencies: ServiceIdentifier[],
+) {
+	function WithContainer(props: TProps) {
 		return (
 			<DependencyProvider dependencies={dependencies}>
 				<WrappedComponent {...props} />
 			</DependencyProvider>
 		);
-	};
+	}
 
-	WithContainer.displayName = `WithContainer(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
+	WithContainer.displayName = `WithContainer(${
+		WrappedComponent.displayName || WrappedComponent.name || "Component"
+	})`;
 
 	return WithContainer;
-};
+}
+
+export const withContainer = ContainerHOC;

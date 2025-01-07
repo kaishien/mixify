@@ -73,8 +73,9 @@ const Home = observer(() => {
 	);
 });
 
-export const HomePage = withContainer(Home, {
-	userService: UserServiceContainerToken.UserService,
-	authService: AuthServiceContainerToken.AuthService,
-	mixGenresService: MixGenresServiceContainerToken.MixGenresService,
-});
+export const HomePage = withContainer(Home, [
+	UserServiceContainerToken.UserService,
+	AuthServiceContainerToken.AuthService,
+	MixGenresServiceContainerToken.MixGenresService,
+]);
+
