@@ -7,14 +7,14 @@ import type { UserService } from "~/services/user/user.service";
 import { UserServiceContainerToken } from "~/services/user/user.service";
 import { Api } from "~/shared/api";
 import { LoaderProcessor } from "~/shared/lib/loader-processor";
+import { WebPlayerService } from "./web-player.service";
 
 export const MixedPlaylistServiceContainerToken = Symbol.for("MixedPlaylistService");
 
 @injectable()
 export class MixedPlaylistService {
   mixedPlaylist: Track[] = [];
-  deviceId = "";
-
+  playerService = new WebPlayerService();
   addingToLibraryLoader = new LoaderProcessor();
 
   constructor(
@@ -30,7 +30,7 @@ export class MixedPlaylistService {
   }
 
   updateDeviceId(deviceId: string) {
-    this.deviceId = deviceId;
+    this.playerService.deviceId = deviceId;
   }
 
   get mixedTracksUris() {
@@ -38,15 +38,15 @@ export class MixedPlaylistService {
   }
 
   async playMixedPlaylist() {
-    if (!this.deviceId) return;
+    if (!this.playerService.deviceId) return;
 
-    await this.api.player.playTrack(this.mixedTracksUris, this.deviceId);
+    await this.api.player.playTrack(this.mixedTracksUris, this.playerService.deviceId);
   }
 
   async playTrack(trackId: string) {
-    if (!this.deviceId) return;
+    if (!this.playerService.deviceId) return;
 
-    await this.api.player.playTrack([trackId], this.deviceId);
+    await this.api.player.playTrack([trackId], this.playerService.deviceId);
   }
 
   async addMixedPlaylistToUserLibrary(

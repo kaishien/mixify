@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import Next from "~/shared/ui/assets/player-icons/next-track.svg?react";
 import Pause from "~/shared/ui/assets/player-icons/pause.svg?react";
@@ -19,26 +19,10 @@ export const WebPlayback = observer(() => {
 	const mixedPlaylistService = useInjection<MixedPlaylistService>(
 		MixedPlaylistServiceContainerToken,
 	);
+
+	const playerService = mixedPlaylistService.playerService;
 	
 	const token = authService.getToken();
-
-	const [player, setPlayer] = useState<Spotify.Player | null>(null);
-	const [isActive, setIsActive] = useState(false);
-	const [currentTrack, setCurrentTrack] = useState<Spotify.Track | null>(null);
-	const [isPaused, setIsPaused] = useState(false);
-	const [deviceId, setDeviceId] = useState("");
-
-	const handlePlayPause = useCallback(() => {
-		player?.togglePlay();
-	}, [player]);
-
-	const handlePrevTrack = useCallback(() => {
-		player?.previousTrack();
-	}, [player]);
-
-	const handleNextTrack = useCallback(() => {
-		player?.nextTrack();
-	}, [player]);
 
 	useEffect(() => {
 		const script = document.createElement("script");
@@ -49,28 +33,28 @@ export const WebPlayback = observer(() => {
 
 		window.onSpotifyWebPlaybackSDKReady = () => {
 			const player = new window.Spotify.Player({
-				name: "Web Playback SDK",
+				name: "Mixify Web Player",
 				getOAuthToken: (cb) => {
 					cb(token);
 				},
 				volume: 0.5,
 			});
 
-			setPlayer(player);
+			playerService.setPlayerInstance(player);
 
 			player.addListener("ready", ({ device_id }) => {
-				setDeviceId(device_id);
-				setIsActive(true);
+				mixedPlaylistService.updateDeviceId(device_id);
+				playerService.isPlayerReady.set(true);
 			});
-
+			
 			player.addListener("not_ready", () => {
-				setIsActive(false);
+				playerService.isPlayerReady.set(false);
 			});
 
 			player.addListener("player_state_changed", (state) => {
 				if (state) {
-					setCurrentTrack(state.track_window.current_track);
-					setIsPaused(state.paused);
+					playerService.setCurrentTrack(state.track_window.current_track);
+					playerService.setIsPaused(state.paused);
 				}
 			});
 
@@ -78,37 +62,31 @@ export const WebPlayback = observer(() => {
 		};
 
 		return () => {
-			player?.disconnect();
+			playerService.playerInstance?.disconnect();
 			script.remove();
 		};
 	}, [token]);
 
-	useEffect(() => {
-		if (deviceId) {
-			mixedPlaylistService.updateDeviceId(deviceId);
-		}
-	}, [isActive, deviceId]);
-
-	if (!isActive) return <div className={styles.connecting}>Connecting to Spotify...</div>;
+	if (!playerService.isPlayerReady.state) return <div className={styles.connecting}>Connecting to Spotify...</div>;
 
 	return (
 		<div className={styles.player}>
-			{currentTrack && (
+			{playerService.currentTrack && (
 				<>
 					<img
 						className={styles.cover}
-						src={currentTrack.album.images[0]?.url}
-						alt={currentTrack.name}
+						src={playerService.currentTrack.album.images[0]?.url}
+						alt={playerService.currentTrack.name}
 					/>
 					<div className={styles.info}>
-						<div className={styles.trackName}>{currentTrack.name}</div>
-						<div className={styles.artistName}>{currentTrack.artists[0].name}</div>
+						<div className={styles.trackName}>{playerService.currentTrack.name}</div>
+						<div className={styles.artistName}>{playerService.currentTrack.artists[0].name}</div>
 					</div>
 					<div className={styles.controls}>
 						<button
 							type="button"
 							className={styles.controlButton}
-							onClick={handlePrevTrack}
+							onClick={playerService.handlePrevTrack}
 							aria-label="Previous track"
 						>
 							<Prev />
@@ -116,15 +94,15 @@ export const WebPlayback = observer(() => {
 						<button
 							type="button"
 							className={styles.controlButton}
-							onClick={handlePlayPause}
+							onClick={playerService.handlePlayPause}
 							aria-label="Play or pause"
 						>
-							{isPaused ? <Play /> : <Pause />}
+							{playerService.isPaused ? <Play /> : <Pause />}
 						</button>
 						<button
 							type="button"
 							className={styles.controlButton}
-							onClick={handleNextTrack}
+							onClick={playerService.handleNextTrack}
 							aria-label="Next track"
 						>
 							<Next />
