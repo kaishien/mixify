@@ -4,7 +4,7 @@ import type { Artist, Track } from "spotify-types";
 import type { IService } from "~/config/service.interface";
 import type { lastFmTypes } from "~/shared/api";
 import { Api } from "~/shared/api";
-import { AsyncOperation, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
+import { AsyncOperation } from "~/shared/factories/async-operation";
 import { chunkArray, shuffleArray } from "~/shared/lib/collection";
 import { LoaderProcessor } from "~/shared/lib/loader-processor";
 import type { MixedPlaylistService } from "./mixed-playlist.service";
@@ -41,7 +41,6 @@ export class MixGenresService implements IService {
   favoriteArtists: Map<Artist["name"], Artist> = new Map();
 
   private asyncOperation: AsyncOperation;
-  private localStorageStorage: LocalStorageCacheStrategy;
 
   initialLoadingData = new LoaderProcessor();
   mixifyLoadingData = new LoaderProcessor();
@@ -53,18 +52,12 @@ export class MixGenresService implements IService {
     MAX_PLAYLIST_SIZE: 100,
   } as const;
 
-  private readonly CACHE_KEYS = {
-    ARTIST_GENRES: "artist-genres",
-    FAVORITE_TRACKS: "favorite-tracks",
-  } as const;
-
   constructor(
     @inject(Api) private api: Api,
     @inject(MixedPlaylistServiceContainerToken) private mixedPlaylistService: MixedPlaylistService,
   ) {
     makeAutoObservable(this);
     this.asyncOperation = new AsyncOperation();
-    this.localStorageStorage = new LocalStorageCacheStrategy();
 
     reaction(
       () => this.listenGenres,
@@ -165,60 +158,55 @@ export class MixGenresService implements IService {
     return shuffledTracks.slice(0, count);
   }
 
-  private async getSimilarTracksForSelection(
-    tracks: TrackWithArtist[],
-  ): Promise<SimilarTrackInfo[]> {
-    const result: lastFmTypes.LastFMTrackGetSimilarResponse[] = [];
-
-    for (const track of tracks) {
-      await this.asyncOperation.execute(
-        async () => await this.api.recommendations.getSimilarTracks(track.artist, track.track),
-        {
-          onSuccess: (data) => {
-            if (data.similartracks.track.length > 0) {
-              result.push(data);
-            }
-          },
-        },
-      );
-    }
-
-    return result.flatMap((item) =>
-      item.similartracks.track.slice(0, this.CONFIG.SIMILAR_TRACKS_PER_ITEM).map((track) => ({
-        name: track.name,
-        artist: track.artist.name,
-      })),
+  private async getSimilarTracksForSelection(tracks: TrackWithArtist[]): Promise<SimilarTrackInfo[]> {
+    const promises = tracks.map(track => 
+      this.asyncOperation.execute<lastFmTypes.LastFMTrackGetSimilarResponse>(
+        async () => await this.api.recommendations.getSimilarTracks(track.artist, track.track)
+      )
     );
+
+    const results = await Promise.all(promises);
+    
+    return results
+      .filter(({ data }) => data && data.similartracks.track.length > 0)
+      .flatMap(item => {
+        if (!item.data) return [];
+        
+        return item.data.similartracks.track
+          .slice(0, this.CONFIG.SIMILAR_TRACKS_PER_ITEM)
+          .map(track => ({
+            name: track.name,
+            artist: track.artist.name,
+          }))
+      });
   }
 
   private async searchAndFilterTracks(tracksInfo: Array<{ name: string; artist: string }>) {
+    const searchPromises = tracksInfo.map(track => {
+      const query = `track:${track.name} artist:${track.artist}`;
+      return this.asyncOperation.execute(
+        async () => await this.api.search.search(query, { type: ["track"] })
+      );
+    });
+
+    const searchResults = await Promise.all(searchPromises);
     const mixedTracks: Track[] = [];
     const artistCount: Record<string, number> = {};
 
-    for (const track of tracksInfo) {
-      const query = `track:${track.name} artist:${track.artist}`;
-
-      await this.asyncOperation.execute(
-        async () => await this.api.search.search(query, { type: ["track"] }),
-        {
-          onSuccess: (data) => {
-            if (data.tracks?.items) {
-              const filteredTracks = data.tracks.items.filter((track) => {
-                const artistId = track.artists[0].id;
-                const currentCount = artistCount[artistId] || 0;
-
-                if (currentCount < 2) {
-                  artistCount[artistId] = currentCount + 1;
-                  return true;
-                }
-                return false;
-              });
-
-              mixedTracks.push(...filteredTracks);
-            }
-          },
-        },
-      );
+    for (const data of searchResults) {
+      const result = data.data;
+      if (result?.tracks?.items) {
+        const filteredTracks = result.tracks.items.filter(track => {
+          const artistId = track.artists[0].id;
+          const currentCount = artistCount[artistId] || 0;
+          if (currentCount < 2) {
+            artistCount[artistId] = currentCount + 1;
+            return true;
+          }
+          return false;
+        });
+        mixedTracks.push(...filteredTracks);
+      }
     }
 
     return shuffleArray(mixedTracks).slice(0, 100);
@@ -292,20 +280,23 @@ export class MixGenresService implements IService {
     const artistIds = Array.from(this.uniqueArtistsFromFavoritesTracks.keys());
     const chunks = chunkArray(artistIds, 50);
 
-    for (const chunk of chunks) {
-      await this.asyncOperation.execute(async () => await this.api.artist.getSeveralArtists(chunk), {
-        onSuccess: (artists) => {
-          if (artists) {
-            const genres = this.listenGenres.concat(artists.flatMap((artist) => artist.genres));
+    const promises = chunks.map(chunk => 
+      this.asyncOperation.execute(
+        async () => await this.api.artist.getSeveralArtists(chunk)
+      )
+    );
 
-            this.updateListenGenres(genres);
+    const results = await Promise.all(promises);
 
-            for (const artist of artists) {
-              this.updateFavoriteArtists(artist);
-            }
-          }
-        },
-      });
+    for (const { data: artists } of results) {
+      if (artists) {
+        const genres = this.listenGenres.concat(artists.flatMap(artist => artist.genres));
+        this.updateListenGenres(genres);
+        
+        for (const artist of artists) {
+          this.updateFavoriteArtists(artist);
+        }
+      }
     }
   }
 }

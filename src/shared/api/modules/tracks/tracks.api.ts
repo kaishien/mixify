@@ -24,23 +24,21 @@ export class TracksApi {
 	}
 
 	async getAllSavedTracks(): Promise<Track[]> {
-		const allTracks: Track[] = [];
-    
-		let offset = 0;
 		const limit = 50;
 		
-		const response = await this.baseClient.get<SpotifyTracksResponse>(
-			`/v1/me/tracks?limit=${limit}&offset=${offset}`
+		const initialResponse = await this.baseClient.get<SpotifyTracksResponse>(
+			`/v1/me/tracks?limit=${limit}&offset=0`
 		);
 		
-		const totalTracks = response.total;
+		const totalTracks = initialResponse.total;
+		const totalPages = Math.ceil(totalTracks / limit);
 		
-		while (offset < totalTracks) {
-			const tracks = await this.getSavedTracks(limit, offset);
-			allTracks.push(...tracks);
-			offset += limit;
-		}
-  
-		return allTracks;
+		const promises = Array.from({ length: totalPages }, (_, index) => 
+			this.getSavedTracks(limit, index * limit)
+		);
+
+		const results = await Promise.all(promises);
+		
+		return results.flat();
 	}
 }
