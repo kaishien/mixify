@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { makeAutoObservable } from "mobx";
 import { RouterService } from "~/config";
 import type { IService } from "~/config/service.interface";
-import { AuthApi } from "~/shared/api";
+import { Api } from "~/shared/api";
 import type { AuthorizationResponse } from "~/shared/api/modules/auth/types";
 import { AUTH_STORAGE_KEY } from "~/shared/constants";
 import { Events, eventEmitter } from "~/shared/event-emmiter";
@@ -20,9 +20,9 @@ export const AuthServiceContainerToken = {
 export class AuthService implements IService {
 	private readonly asyncOperation: AsyncOperation;
 	private readonly storage: CacheStrategy;
-
+	
 	constructor(
-		@inject(AuthApi) private readonly authApi: AuthApi,
+		@inject(Api) private readonly api: Api,
 		@inject(RouterService) private readonly routerService: RouterService,
 	) {
 		makeAutoObservable(this);
@@ -51,7 +51,7 @@ export class AuthService implements IService {
 		if (!authData.refresh_token) return;
 
 		const result = await this.asyncOperation.execute(
-			async () => await this.authApi.refreshToken(authData.refresh_token),
+			async () => await this.api.auth.refreshToken(authData.refresh_token),
 		);
 
 		this.storage.set(AUTH_STORAGE_KEY, result.data, authData.expires_in * 1000);
@@ -68,7 +68,7 @@ export class AuthService implements IService {
 
 	async handleCallback(code: string): Promise<void> {
 		const result = await this.asyncOperation.execute(
-			() => this.authApi.getAccessTokenFromCode(code),
+			() => this.api.auth.getAccessTokenFromCode(code),
 			{
 				cache: {
 					strategy: this.storage,
@@ -85,7 +85,7 @@ export class AuthService implements IService {
 	}
 
 	async authorize(): Promise<void> {
-		await this.authApi.authorize();
+		await this.api.auth.authorize();
 	}
 
 	logout(): void {

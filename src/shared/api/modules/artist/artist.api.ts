@@ -1,9 +1,9 @@
 import { HttpClientToken } from "~/config";
-
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import type { Artist } from "spotify-types";
 import type { HttpClient } from "~/config";
 
+@injectable()
 export class ArtistApi {
 	constructor(
 		@inject(HttpClientToken.SpotifyBase) private httpClient: HttpClient,

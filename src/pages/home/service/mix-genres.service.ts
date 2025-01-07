@@ -3,8 +3,7 @@ import { makeAutoObservable, reaction } from "mobx";
 import type { Artist, Track } from "spotify-types";
 import type { IService } from "~/config/service.interface";
 import type { lastFmTypes } from "~/shared/api";
-import { ArtistApi, RecommendationsApi, TracksApi } from "~/shared/api";
-import { SearchApi } from "~/shared/api/modules/search";
+import { Api } from "~/shared/api";
 import { AsyncOperation, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
 import { chunkArray, shuffleArray } from "~/shared/lib/collection";
 import { LoaderProcessor } from "~/shared/lib/loader-processor";
@@ -60,10 +59,7 @@ export class MixGenresService implements IService {
   } as const;
 
   constructor(
-    @inject(ArtistApi) private artistApi: ArtistApi,
-    @inject(TracksApi) private tracksApi: TracksApi,
-    @inject(RecommendationsApi) private recommendationsApi: RecommendationsApi,
-    @inject(SearchApi) private searchApi: SearchApi,
+    @inject(Api) private api: Api,
     @inject(MixedPlaylistServiceContainerToken) private mixedPlaylistService: MixedPlaylistService,
   ) {
     makeAutoObservable(this);
@@ -134,7 +130,7 @@ export class MixGenresService implements IService {
   async createMixPlaylist() {
     this.mixifyLoadingData.setIsLoading(true);
     this.mixedPlaylistService.updateMixedPlaylist([]);
-    
+
     try {
       const lastAddedTracks = this.getRandomTracksFromFavorites(this.CONFIG.RANDOM_TRACKS_COUNT);
       if (!lastAddedTracks.length) {
@@ -176,7 +172,7 @@ export class MixGenresService implements IService {
 
     for (const track of tracks) {
       await this.asyncOperation.execute(
-        async () => await this.recommendationsApi.getSimilarTracks(track.artist, track.track),
+        async () => await this.api.recommendations.getSimilarTracks(track.artist, track.track),
         {
           onSuccess: (data) => {
             if (data.similartracks.track.length > 0) {
@@ -203,7 +199,7 @@ export class MixGenresService implements IService {
       const query = `track:${track.name} artist:${track.artist}`;
 
       await this.asyncOperation.execute(
-        async () => await this.searchApi.search(query, { type: ["track"] }),
+        async () => await this.api.search.search(query, { type: ["track"] }),
         {
           onSuccess: (data) => {
             if (data.tracks?.items) {
@@ -281,7 +277,7 @@ export class MixGenresService implements IService {
 
   private async fetchFavoritesTracks() {
     const result = await this.asyncOperation.execute(
-      async () => await this.tracksApi.getAllSavedTracks(),
+      async () => await this.api.tracks.getAllSavedTracks(),
       {
         onSuccess: (data) => {
           this.updateFavoritesTracks(data);
@@ -297,7 +293,7 @@ export class MixGenresService implements IService {
     const chunks = chunkArray(artistIds, 50);
 
     for (const chunk of chunks) {
-      await this.asyncOperation.execute(async () => await this.artistApi.getSeveralArtists(chunk), {
+      await this.asyncOperation.execute(async () => await this.api.artist.getSeveralArtists(chunk), {
         onSuccess: (artists) => {
           if (artists) {
             const genres = this.listenGenres.concat(artists.flatMap((artist) => artist.genres));

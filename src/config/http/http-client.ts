@@ -93,7 +93,7 @@ export class HttpClient {
 		return response.json();
 	}
 
-	async put<T, U>(url: string, body: U, options?: RequestInit): Promise<T> {
+	async put<T, U>(url: string, body: U, options?: RequestInit): Promise<T | null> {
 		const response = await fetch(`${this.baseURL}${url}`, {
 			method: "PUT",
 			headers: {
@@ -104,6 +104,21 @@ export class HttpClient {
 			...options,
 		});
 
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		if(response.status === 401) {
+			eventEmitter.emit(Events.TOKEN_EXPIRED);
+			throw new Error('Token expired');
+		}
+
+		if(response.status === 403) {
+			eventEmitter.emit(Events.AUTH_ERROR);
+			throw new Error("Auth error");
+		}
+		
 		return response.json();
 	}
 

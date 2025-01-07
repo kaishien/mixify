@@ -5,7 +5,7 @@ import type { INotificationService } from "~/services/notification";
 import { NotificationServiceToken } from "~/services/notification";
 import type { UserService } from "~/services/user/user.service";
 import { UserServiceContainerToken } from "~/services/user/user.service";
-import { PlayerApi, PlaylistsApi } from "~/shared/api";
+import { Api } from "~/shared/api";
 import { LoaderProcessor } from "~/shared/lib/loader-processor";
 
 export const MixedPlaylistServiceContainerToken = Symbol.for("MixedPlaylistService");
@@ -17,11 +17,9 @@ export class MixedPlaylistService {
 
   addingToLibraryLoader = new LoaderProcessor();
 
-
   constructor(
-    @inject(PlayerApi) private readonly playerApi: PlayerApi,
+    @inject(Api) private readonly api: Api,
     @inject(UserServiceContainerToken.UserService) private userService: UserService,
-    @inject(PlaylistsApi) private readonly playlistsApi: PlaylistsApi,
     @inject(NotificationServiceToken) private readonly notificationService: INotificationService,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -42,13 +40,13 @@ export class MixedPlaylistService {
   async playMixedPlaylist() {
     if (!this.deviceId) return;
 
-    await this.playerApi.playTrack(this.mixedTracksUris, this.deviceId);
+    await this.api.player.playTrack(this.mixedTracksUris, this.deviceId);
   }
 
   async playTrack(trackId: string) {
     if (!this.deviceId) return;
 
-    await this.playerApi.playTrack([trackId], this.deviceId);
+    await this.api.player.playTrack([trackId], this.deviceId);
   }
 
   async addMixedPlaylistToUserLibrary(
@@ -63,14 +61,14 @@ export class MixedPlaylistService {
       const userId = this.userService.user?.id;
       if (!userId) return;
 
-      const createdPlaylist = await this.playlistsApi.createPlaylist(
+      const createdPlaylist = await this.api.playlists.createPlaylist(
         userId,
         playlistConfig.name,
         playlistConfig.description,
         true,
       );
 
-      await this.playlistsApi.addTracksToPlaylist(createdPlaylist.id, this.mixedTracksUris);
+      await this.api.playlists.addTracksToPlaylist(createdPlaylist.id, this.mixedTracksUris);
 
       this.notificationService.showSuccess("Playlist added to library");
     } catch (error) {
