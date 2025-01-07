@@ -1,13 +1,17 @@
 import { observer } from "mobx-react-lite";
 import { useInjection } from "~/config/ioc/use-injection";
 import { Button } from "~/shared/ui/components";
-import { type MixGenresService, MixGenresServiceContainerToken } from "../../service/mix-genres.service";
+import {
+	type MixGenresService,
+	MixGenresServiceContainerToken,
+} from "../../service/mix-genres.service";
 import type { MixedPlaylistService } from "../../service/mixed-playlist.service";
 import { MixedPlaylistServiceContainerToken } from "../../service/mixed-playlist.service";
 import { Playlist } from "./playlist";
 import { PlaylistHeader } from "./playlist-header";
 
 import styles from "./generate-playlist.module.css";
+import { ScreenLoader } from "./screen-loader";
 
 const GeneratedPlaylist = observer(() => {
 	const mixedPlaylistService = useInjection<MixedPlaylistService>(
@@ -39,16 +43,16 @@ export const GeneratePlaylist = observer(() => {
 
 	return (
 		<div className={styles.generatePlaylistContainer}>
-			{hasMixedTracks ? (
-				<GeneratedPlaylist />
-			) : (
+			{hasMixedTracks && <GeneratedPlaylist />}
+
+			{mixGenresService.mixifyLoadingData.isLoading && <ScreenLoader />}
+
+			{!hasMixedTracks && !mixGenresService.mixifyLoadingData.isLoading && (
 				<Button
 					className={styles.generatePlaylistContainer__button}
 					variant="secondary"
 					isLoading={mixGenresService.mixifyLoadingData.isLoading}
-					onClick={() =>
-						mixGenresService.createMixPlaylist()
-					}
+					onClick={() => mixGenresService.createMixPlaylist()}
 				>
 					Mixify
 				</Button>

@@ -2,15 +2,14 @@ import { inject, injectable } from "inversify";
 import { makeAutoObservable, reaction } from "mobx";
 import type { Artist, Track } from "spotify-types";
 import type { IService } from "~/config/service.interface";
-import { type UserService, UserServiceContainerToken } from "~/services/user";
 import type { lastFmTypes } from "~/shared/api";
-import { ArtistApi, PlaylistsApi, RecommendationsApi, TracksApi } from "~/shared/api";
+import { ArtistApi, RecommendationsApi, TracksApi } from "~/shared/api";
 import { SearchApi } from "~/shared/api/modules/search";
 import { AsyncOperation, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
 import { chunkArray, shuffleArray } from "~/shared/lib/collection";
 import { LoaderProcessor } from "~/shared/lib/loader-processor";
-import { MixedPlaylistServiceContainerToken } from "./mixed-playlist.service";
 import type { MixedPlaylistService } from "./mixed-playlist.service";
+import { MixedPlaylistServiceContainerToken } from "./mixed-playlist.service";
 
 export const MixGenresServiceContainerToken = {
   MixGenresService: Symbol("MixGenresService"),
@@ -134,7 +133,8 @@ export class MixGenresService implements IService {
 
   async createMixPlaylist() {
     this.mixifyLoadingData.setIsLoading(true);
-
+    this.mixedPlaylistService.updateMixedPlaylist([]);
+    
     try {
       const lastAddedTracks = this.getRandomTracksFromFavorites(this.CONFIG.RANDOM_TRACKS_COUNT);
       if (!lastAddedTracks.length) {

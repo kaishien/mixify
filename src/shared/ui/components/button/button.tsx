@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
 
-import { VinylLoader } from "../loader/vinyl-loader";
 import styles from "./button.module.css";
 
 type ButtonProps = {
@@ -14,8 +13,12 @@ type ButtonProps = {
 	size?: "small" | "medium";
 };
 
+const Loader = () => {
+	return <span className={styles.loader}/>
+}
+
 const renderButtonContent = (isLoading: boolean, icon: ReactNode, children: ReactNode, size: "small" | "medium" = "medium") => {
-	if (isLoading) return <VinylLoader size={size} />;
+	if (isLoading) return <Loader/>;
 	if (icon) return <>{icon} {children}</>;
 	return children;
 };

@@ -1,0 +1,101 @@
+.screenLoader {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-panel-color);
+  overflow: hidden;
+}
+
+.screenLoader__gradient {
+  position: absolute;
+  inset: -100%;
+  background: linear-gradient(
+    45deg,
+    var(--primary-accent-color) 0%,
+    var(--secondary-accent-color) 25%,
+    var(--primary-accent-color) 50%,
+    var(--secondary-accent-color) 75%,
+    var(--primary-accent-color) 100%
+  );
+  background-size: 400% 400%;
+  opacity: 0;
+  z-index: 0;
+  will-change: transform, background-position;
+}
+
+.screenLoader__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+  padding: 32px;
+}
+
+.screenLoader__text {
+  color: var(--text-color);
+  text-align: center;
+  position: relative;
+}
+
+.screenLoader__title {
+  display: inline-block;
+  position: relative;
+  font-size: 24px;
+  font-weight: 500;
+  white-space: pre;
+}
+
+.screenLoader__cursor {
+  display: inline-block;
+  margin-left: 2px;
+  font-weight: 400;
+  color: var(--primary-accent-color);
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.screenLoader__vinyls {
+  position: relative;
+  width: 400px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.screenLoader__vinyl {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  z-index: 1;
+  cursor: grab;
+  touch-action: none;
+}
+
+.screenLoader__vinyl:active {
+  cursor: grabbing;
+}
+
+.screenLoader__vinylCenter {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  z-index: 2;
+}
