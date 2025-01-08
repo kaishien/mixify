@@ -23,6 +23,7 @@
 		"reflect-metadata": "^0.2.2",
 		"sonner": "^1.7.1"
 	},
+  "packageManager": "pnpm@9.9.0+sha256.7a4261e50d9a44d9240baf6c9d6e10089dcf0a79d0007f2a26985a6927324177",
 	"devDependencies": {
 		"@babel/plugin-proposal-class-properties": "^7.18.6",
 		"@babel/plugin-proposal-decorators": "^7.25.9",
