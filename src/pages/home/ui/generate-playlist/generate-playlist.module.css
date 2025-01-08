@@ -166,10 +166,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 260px;
 }
 
 .track__artist {
-  max-width: 250px;
+  max-width: 260px;
   color: var(--text-secondary-color);
   font-size: 14px;
   white-space: nowrap;
