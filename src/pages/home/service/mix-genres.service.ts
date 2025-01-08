@@ -2,7 +2,6 @@ import { inject, injectable } from "inversify";
 import { makeAutoObservable, reaction } from "mobx";
 import type { Artist, Track } from "spotify-types";
 import type { IService } from "~/config/service.interface";
-import type { lastFmTypes } from "~/shared/api";
 import { Api } from "~/shared/api";
 import { AsyncOperation } from "~/shared/factories/async-operation";
 import { chunkArray, shuffleArray } from "~/shared/lib/collection";
@@ -202,47 +201,47 @@ export class MixGenresService implements IService {
     });
   }
 
-  private async getSimilarTracksForSelection(tracks: TrackWithArtist[]): Promise<SimilarTrackInfo[]> {
-    const promises = tracks.map(track =>
-      this.asyncOperation.execute<lastFmTypes.LastFMTrackGetSimilarResponse>(
-        async () => await this.api.recommendations.getSimilarTracks(track.artist, track.track)
-      )
-    );
+  // private async getSimilarTracksForSelection(tracks: TrackWithArtist[]): Promise<SimilarTrackInfo[]> {
+  //   const promises = tracks.map(track =>
+  //     this.asyncOperation.execute<lastFmTypes.LastFMTrackGetSimilarResponse>(
+  //       async () => await this.api.recommendations.getSimilarTracks(track.artist, track.track)
+  //     )
+  //   );
 
-    const results = await Promise.all(promises);
+  //   const results = await Promise.all(promises);
 
-    return results.filter(({ data }) => data && data.similartracks.track.length > 0)
-      .flatMap(item => {
-        if (!item.data) return [];
-        return shuffleArray(item.data.similartracks.track)
-          .slice(0, this.CONFIG.SIMILAR_TRACKS_PER_ITEM)
-          .map(track => ({
-            name: track.name,
-            artist: track.artist.name,
-          }))
-      });
-  }
+  //   return results.filter(({ data }) => data && data.similartracks.track.length > 0)
+  //     .flatMap(item => {
+  //       if (!item.data) return [];
+  //       return shuffleArray(item.data.similartracks.track)
+  //         .slice(0, this.CONFIG.SIMILAR_TRACKS_PER_ITEM)
+  //         .map(track => ({
+  //           name: track.name,
+  //           artist: track.artist.name,
+  //         }))
+  //     });
+  // }
 
-  private async getSimilarTracksByGenre() {
-    const promises = shuffleArray(this.listenGenres.slice(0, 20)).map(genre =>
-      this.asyncOperation.execute(
-        async () => await this.api.recommendations.getSimilarTracksByGenre(genre)
-      )
-    );
+  // private async getSimilarTracksByGenre() {
+  //   const promises = shuffleArray(this.listenGenres.slice(0, 20)).map(genre =>
+  //     this.asyncOperation.execute(
+  //       async () => await this.api.recommendations.getSimilarTracksByGenre(genre)
+  //     )
+  //   );
 
-    const results = await Promise.all(promises.slice(0, 20));
+  //   const results = await Promise.all(promises.slice(0, 20));
 
-    return results.filter(({ data }) => data && data.tracks.track.length > 0)
-      .flatMap(item => {
-        if (!item.data) return [];
-        return shuffleArray(item.data.tracks.track)
-          .slice(0, 10)
-          .map(track => ({
-            name: track.name,
-            artist: track.artist.name,
-          }))
-      });
-  }
+  //   return results.filter(({ data }) => data && data.tracks.track.length > 0)
+  //     .flatMap(item => {
+  //       if (!item.data) return [];
+  //       return shuffleArray(item.data.tracks.track)
+  //         .slice(0, 10)
+  //         .map(track => ({
+  //           name: track.name,
+  //           artist: track.artist.name,
+  //         }))
+  //     });
+  // }
 
   private async searchAndFilterTracks(tracksInfo: Array<{ name: string; artist: string }>) {
     const searchPromises = tracksInfo.map(track => {

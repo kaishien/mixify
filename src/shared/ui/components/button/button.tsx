@@ -17,7 +17,7 @@ const Loader = () => {
 	return <span className={styles.loader}/>
 }
 
-const renderButtonContent = (isLoading: boolean, icon: ReactNode, children: ReactNode, size: "small" | "medium" = "medium") => {
+const renderButtonContent = (isLoading: boolean, icon: ReactNode, children: ReactNode) => {
 	if (isLoading) return <Loader/>;
 	if (icon) return <>{icon} {children}</>;
 	return children;
@@ -44,7 +44,7 @@ export const Button = ({
 			onClick={onClick}
 			disabled={isLoading}
 		>
-			{renderButtonContent(isLoading, icon, children, size)}
+			{renderButtonContent(isLoading, icon, children)}
 		</button>
 	);
 };
