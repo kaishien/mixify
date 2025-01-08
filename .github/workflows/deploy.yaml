@@ -28,6 +28,13 @@ jobs:
         run: pnpm build
         env:
           NODE_ENV: production
+          VITE_SPOTIFY_CLIENT_ID: ${{ secrets.VITE_SPOTIFY_CLIENT_ID }}
+          VITE_SPOTIFY_CLIENT_SECRET: ${{ secrets.VITE_SPOTIFY_CLIENT_SECRET }}
+          VITE_SPOTIFY_BASE_API_URL: ${{ secrets.VITE_SPOTIFY_BASE_API_URL }}
+          VITE_SPOTIFY_ACCOUNT_API_URL: ${{ secrets.VITE_SPOTIFY_ACCOUNT_API_URL }}
+          VITE_AUTH_REDIRECT_URI: ${{ secrets.VITE_AUTH_REDIRECT_URI }}
+          VITE_LAST_FM_API_KEY: ${{ secrets.VITE_LAST_FM_API_KEY }}
+          VITE_LAST_FM_BASE_API_URL: ${{ secrets.VITE_LAST_FM_BASE_API_URL }}
 
       - name: Publish
         uses: netlify/actions/cli@master
@@ -36,10 +43,3 @@ jobs:
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          VITE_SPOTIFY_CLIENT_ID: ${{ secrets.VITE_SPOTIFY_CLIENT_ID }}
-          VITE_SPOTIFY_CLIENT_SECRET: ${{ secrets.VITE_SPOTIFY_CLIENT_SECRET }}
-          VITE_SPOTIFY_BASE_API_URL: ${{ secrets.VITE_SPOTIFY_BASE_API_URL }}
-          VITE_SPOTIFY_ACCOUNT_API_URL: ${{ secrets.VITE_SPOTIFY_ACCOUNT_API_URL }}
-          VITE_AUTH_REDIRECT_URI: ${{ secrets.VITE_AUTH_REDIRECT_URI }}
-          VITE_LAST_FM_API_KEY: ${{ secrets.VITE_LAST_FM_API_KEY }}
-          VITE_LAST_FM_BASE_API_URL: ${{ secrets.VITE_LAST_FM_BASE_API_URL }}
