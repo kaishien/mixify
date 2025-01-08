@@ -15,4 +15,8 @@ export const routes = [
 		path: "/login",
 		element: <LoginPage />,
 	},
+	{
+		path: "*",
+		element: <div>404</div>,
+	},
 ];
