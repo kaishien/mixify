@@ -1,6 +1,6 @@
 import { useRoutes } from "react-router-dom";
 import { Toaster } from "sonner";
-import { getConfig, IocProvider, withContainer } from "../config";
+import { IocProvider, withContainer } from "../config";
 import { BrowserRouter } from "../config/router/browser-router.tsx";
 import { history } from "../config/router/history.ts";
 import { routes } from "../pages/routes.tsx";
@@ -8,8 +8,6 @@ import { ApplicationService } from "./application.service";
 import { container } from "./register-dependencies.ts";
 
 export const AppRoutes = () => useRoutes(routes);
-
-console.log(getConfig())
 
 const ApplicationProvider = () => {
 	return (
