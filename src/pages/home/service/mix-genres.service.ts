@@ -131,7 +131,7 @@ export class MixGenresService implements IService {
         return;
       }
 
-      const similarTracks = await this.getSimilarTracksForSelection(lastAddedTracks);
+      const similarTracks = await this.getSimilarArtistsForSelection(lastAddedTracks);
       if (!similarTracks.length) {
         console.error("No similar tracks found");
         return;
@@ -158,22 +158,85 @@ export class MixGenresService implements IService {
     return shuffledTracks.slice(0, count);
   }
 
+  private async getSimilarArtistsForSelection(tracks: TrackWithArtist[]): Promise<SimilarTrackInfo[]> {
+    const promises = tracks.map(track =>
+      this.api.recommendations.getSimilarArtists(track.artist)
+    );
+
+    const results = await Promise.all(promises);
+
+    const uniqueArtists = new Set<string>();
+    const selectedArtists = [];
+
+    for (const result of results) {
+      if (!result.similarartists?.artist) continue;
+
+      const randomArtists = shuffleArray(result.similarartists.artist)
+        .sort(() => 0.5 - Math.random()).slice(0, 3)
+        .filter(artist => {
+          if (uniqueArtists.has(artist.name)) {
+            return false;
+          }
+          uniqueArtists.add(artist.name);
+          return true;
+        });
+
+      selectedArtists.push(...randomArtists);
+    }
+
+
+    const topTracksPromises = selectedArtists.map(artist =>
+      this.api.recommendations.getTopArtistsTracks(artist.name)
+    );
+
+    const topTracksResults = await Promise.all(topTracksPromises);
+
+    return topTracksResults.flatMap(result => {
+      if (!result.toptracks?.track) return [];
+      return result.toptracks.track
+        .slice(0, 1)
+        .map(track => ({
+          name: track.name,
+          artist: track.artist.name,
+        }));
+    });
+  }
+
   private async getSimilarTracksForSelection(tracks: TrackWithArtist[]): Promise<SimilarTrackInfo[]> {
-    const promises = tracks.map(track => 
+    const promises = tracks.map(track =>
       this.asyncOperation.execute<lastFmTypes.LastFMTrackGetSimilarResponse>(
         async () => await this.api.recommendations.getSimilarTracks(track.artist, track.track)
       )
     );
 
     const results = await Promise.all(promises);
-    
-    return results
-      .filter(({ data }) => data && data.similartracks.track.length > 0)
+
+    return results.filter(({ data }) => data && data.similartracks.track.length > 0)
       .flatMap(item => {
         if (!item.data) return [];
-        
-        return item.data.similartracks.track
+        return shuffleArray(item.data.similartracks.track)
           .slice(0, this.CONFIG.SIMILAR_TRACKS_PER_ITEM)
+          .map(track => ({
+            name: track.name,
+            artist: track.artist.name,
+          }))
+      });
+  }
+
+  private async getSimilarTracksByGenre() {
+    const promises = shuffleArray(this.listenGenres.slice(0, 20)).map(genre =>
+      this.asyncOperation.execute(
+        async () => await this.api.recommendations.getSimilarTracksByGenre(genre)
+      )
+    );
+
+    const results = await Promise.all(promises.slice(0, 20));
+
+    return results.filter(({ data }) => data && data.tracks.track.length > 0)
+      .flatMap(item => {
+        if (!item.data) return [];
+        return shuffleArray(item.data.tracks.track)
+          .slice(0, 10)
           .map(track => ({
             name: track.name,
             artist: track.artist.name,
@@ -280,7 +343,7 @@ export class MixGenresService implements IService {
     const artistIds = Array.from(this.uniqueArtistsFromFavoritesTracks.keys());
     const chunks = chunkArray(artistIds, 50);
 
-    const promises = chunks.map(chunk => 
+    const promises = chunks.map(chunk =>
       this.asyncOperation.execute(
         async () => await this.api.artist.getSeveralArtists(chunk)
       )
@@ -292,7 +355,7 @@ export class MixGenresService implements IService {
       if (artists) {
         const genres = this.listenGenres.concat(artists.flatMap(artist => artist.genres));
         this.updateListenGenres(genres);
-        
+
         for (const artist of artists) {
           this.updateFavoriteArtists(artist);
         }

@@ -169,6 +169,7 @@
 }
 
 .track__artist {
+  max-width: 250px;
   color: var(--text-secondary-color);
   font-size: 14px;
   white-space: nowrap;
