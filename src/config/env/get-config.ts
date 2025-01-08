@@ -6,7 +6,6 @@ export const getConfig = () => {
 		spotifyAccountApiUrl: import.meta.env.VITE_SPOTIFY_ACCOUNT_API_URL,
 		spotifyAuthRedirectUri: import.meta.env.VITE_AUTH_REDIRECT_URI,
 		lastFmApiKey: import.meta.env.VITE_LAST_FM_API_KEY,
-		lastFmSharedSecret: import.meta.env.VITE_LAST_FM_SHARED_SECRET,
 		lastFmBaseApiUrl: import.meta.env.VITE_LAST_FM_BASE_API_URL,
 	};
 };
