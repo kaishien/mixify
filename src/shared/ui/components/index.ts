@@ -6,5 +6,5 @@ export { Container } from "./container/container";
 export { VinylLoader } from "./loader/vinyl-loader";
 export { Panel } from "./panel/panel";
 export { Typography } from "./typography/typography";
-
+export { AudioVisualizer } from "./audio-visualizer/audio-visualizer";
 export { useScrollOverlay } from './overlay/use-scroll-overlay';

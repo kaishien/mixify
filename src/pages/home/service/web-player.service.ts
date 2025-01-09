@@ -12,6 +12,10 @@ export class WebPlayerService {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
+  get currentActiveTrackId() {
+    return this.currentTrack?.id;
+  }
+
   setCurrentTrack(track: Spotify.Track) {
     this.currentTrack = track;
   }

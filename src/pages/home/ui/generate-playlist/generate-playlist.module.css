@@ -112,10 +112,10 @@
   inset: 0;
   border-radius: var(--border-radius-sm);
   background: linear-gradient(
-    to right,
+    to left,
     rgba(254, 193, 71, 0.493) 0%,
-    rgba(223, 166, 50, 0.389) 40%,
-    rgba(228, 157, 16, 0.704) 100%
+    rgba(223, 166, 50, 0.389) 30%,
+    rgba(228, 157, 16, 0.304) 90%
   );
   opacity: 0;
   transition: opacity 0.2s ease-out;
@@ -143,10 +143,54 @@
 }
 
 .track__index {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 24px;
-  color: var(--text-secondary-color);
-  font-size: 14px;
-  text-align: center;
+  height: 24px;
+  position: relative;
+}
+
+.track__number {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.track__index svg {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  fill: var(--text-primary-color);
+}
+
+.track__index svg {
+  opacity: 0;
+}
+
+.track__button:hover .track__number {
+  opacity: 0;
+}
+
+.track__button:hover .track__hoverIcon {
+  opacity: 1;
+}
+
+.track__button[data-active="true"][data-playing="true"]:hover .track__hoverIcon {
+  opacity: 0;
+}
+
+.track__button[data-active="true"][data-playing="true"]:hover .track__index svg:not(.track__hoverIcon) {
+  opacity: 1;
+}
+
+.track__button:hover .track__index {
+  color: var(--color-accent);
+}
+
+.track__button:hover .track__index svg {
+  fill: var(--background-color-dark);
 }
 
 .track__cover {
@@ -163,10 +207,8 @@
 
 .track__name {
   font-weight: 500;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 260px;
 }
 
 .track__artist {
@@ -183,4 +225,17 @@
   font-size: 14px;
   min-width: 45px;
   text-align: right;
+}
+
+.track__coverWrapper {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.track__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
 }

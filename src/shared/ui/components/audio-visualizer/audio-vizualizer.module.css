@@ -1,0 +1,25 @@
+.playingAnimation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 32px;
+  width: 32px;
+  justify-content: center;
+  align-items: center;
+  background: rgba(39, 40, 56, 0.8);
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.playingAnimation span {
+  display: inline-block;
+  width: 3px;
+  background-color: #ff3281;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(255, 50, 129, 0.5);
+  min-height: 4px;
+}

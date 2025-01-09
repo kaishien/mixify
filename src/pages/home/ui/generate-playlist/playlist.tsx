@@ -1,9 +1,12 @@
 import { observer } from "mobx-react-lite";
 import { useInjection } from "~/config/ioc/use-injection";
+import { AudioVisualizer } from "~/shared/ui/components";
 import { Typography } from "~/shared/ui/components/typography/typography";
 import type { MixedPlaylistService } from "../../service/mixed-playlist.service";
 import { MixedPlaylistServiceContainerToken } from "../../service/mixed-playlist.service";
 
+import PauseIcon from "~/shared/ui/assets/player-icons/pause.svg?react";
+import PlayIcon from "~/shared/ui/assets/player-icons/play.svg?react";
 import styles from "./generate-playlist.module.css";
 
 const formatDuration = (ms: number) => {
@@ -17,7 +20,17 @@ export const Playlist = observer(() => {
 		MixedPlaylistServiceContainerToken,
 	);
 
-	const mixedPlaylist = mixedPlaylistService.mixedPlaylist;
+	const { playerService, mixedPlaylist } = mixedPlaylistService;
+	const { currentActiveTrackId } = playerService;
+	const isPlaying = !playerService.isPaused;
+
+	const handleClickTrack = (trackId: string, trackUri: string) => {
+		if (currentActiveTrackId === trackId && isPlaying) {
+			mixedPlaylistService.playerService.handlePlayPause();
+		} else {
+			mixedPlaylistService.playTrack(trackUri);
+		}
+	};
 
 	return (
 		<div className={styles.generatedPlaylist__listContainer}>
@@ -27,17 +40,34 @@ export const Playlist = observer(() => {
 						<button
 							type="button"
 							className={styles.track__button}
-							onClick={() => mixedPlaylistService.playTrack(track.uri)}
+							data-active={currentActiveTrackId === track.id}
+							data-playing={currentActiveTrackId === track.id && isPlaying}
+							onClick={() => handleClickTrack(track.id, track.uri)}
 							onKeyDown={(e) => e.key === "Enter" && mixedPlaylistService.playTrack(track.uri)}
 						>
-							<Typography tag="span" color="gray">
-								{index + 1}
-							</Typography>
-							<img
-								className={styles.track__cover}
-								src={track.album.images[2]?.url}
-								alt={track.name}
-							/>
+							<div className={styles.track__index}>
+								<>
+									<Typography tag="span" color="gray" className={styles.track__number}>
+										{index + 1}
+									</Typography>
+									{currentActiveTrackId === track.id && isPlaying ? (
+										<>
+											<PlayIcon className={styles.track__hoverIcon} />
+											<PauseIcon />
+										</>
+									) : (
+										<PlayIcon className={styles.track__hoverIcon} />
+									)}
+								</>
+							</div>
+							<div className={styles.track__coverWrapper}>
+								<img
+									className={styles.track__cover}
+									src={track.album.images[2]?.url}
+									alt={track.name}
+								/>
+								{currentActiveTrackId === track.id && <AudioVisualizer isPlaying={isPlaying} />}
+							</div>
 							<div className={styles.track__info}>
 								<Typography tag="span" weight="bold" className={styles.track__name}>
 									{track.name}
