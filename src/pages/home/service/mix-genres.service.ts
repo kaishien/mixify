@@ -122,7 +122,7 @@ export class MixGenresService implements IService {
     this.mixedPlaylistService.updateMixedPlaylist([]);
 
     try {
-      const lastAddedTracks = this.mapFavoriteTracksWithArtist.slice(0, this.CONFIG.RANDOM_TRACKS_COUNT);
+      const lastAddedTracks = this.getRandomTracksFromFavorites(this.CONFIG.RANDOM_TRACKS_COUNT);
       if (!lastAddedTracks.length) {
         console.error("No tracks found in favorites");
         return;
