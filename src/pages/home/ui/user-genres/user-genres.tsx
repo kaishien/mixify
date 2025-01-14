@@ -12,7 +12,7 @@ export const UserGenres = observer(() => {
 	const { showTopOverlay, showBottomOverlay, listRef, handleScroll } = useScrollOverlay();
 
 	const mixGenresService = container.get<MixGenresService>(
-		MixGenresServiceContainerToken.MixGenresService,
+		MixGenresServiceContainerToken
 	);
 
 	return (

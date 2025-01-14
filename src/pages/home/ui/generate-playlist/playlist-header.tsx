@@ -15,7 +15,7 @@ const PlaylistControls = observer(() => {
 	);
 
 	const mixGenresService = useInjection<MixGenresService>(
-		MixGenresServiceContainerToken.MixGenresService,
+		MixGenresServiceContainerToken
 	);
 
 	return (

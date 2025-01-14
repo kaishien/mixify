@@ -32,7 +32,7 @@ const GeneratedPlaylist = observer(() => {
 
 export const GeneratePlaylist = observer(() => {
 	const mixGenresService = useInjection<MixGenresService>(
-		MixGenresServiceContainerToken.MixGenresService,
+		MixGenresServiceContainerToken
 	);
 
 	const mixedPlaylistService = useInjection<MixedPlaylistService>(

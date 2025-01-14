@@ -44,11 +44,11 @@ export const WebPlayback = observer(() => {
 
 			player.addListener("ready", ({ device_id }) => {
 				mixedPlaylistService.updateDeviceId(device_id);
-				playerService.isPlayerReady.set(true);
+				playerService.playerReady.set(true);
 			});
 			
 			player.addListener("not_ready", () => {
-				playerService.isPlayerReady.set(false);
+				playerService.playerReady.set(false);
 			});
 
 			player.addListener("player_state_changed", (state) => {
@@ -67,7 +67,7 @@ export const WebPlayback = observer(() => {
 		};
 	}, [token]);
 
-	if (!playerService.isPlayerReady.state) return <div className={styles.connecting}>Connecting to Spotify...</div>;
+	if (!playerService.playerReady.state) return <div className={styles.connecting}>Connecting to Spotify...</div>;
 
 	return (
 		<div className={styles.player}>

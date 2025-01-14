@@ -36,6 +36,11 @@
 	--main-bold-font: "PTSans", sans-serif;
 
 	--focus-ring-color: var(--secondary-accent-color);
+
+	/* Media queries */
+	--mobile-width: 768px;
+	--tablet-width: 1024px;
+	--desktop-width: 1200px;
 }
 
 @font-face {

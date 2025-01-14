@@ -8,7 +8,7 @@ import {
 
 export const UserSavedTracks = observer(() => {
 	const mixGenresService = useInjection<MixGenresService>(
-		MixGenresServiceContainerToken.MixGenresService,
+		MixGenresServiceContainerToken
 	);
 
 	return (

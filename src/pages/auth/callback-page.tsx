@@ -6,7 +6,6 @@ export const CallbackAuth = () => {
 	const authService = useInjection<AuthService>(AuthServiceContainerToken.AuthService);
 
 	useEffect(() => {
-		console.log("CallbackAuth");
 		const handleCallback = async () => {
 			const url = new URL(window.location.href);
 			const code = url.searchParams.get("code");

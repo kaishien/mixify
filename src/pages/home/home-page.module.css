@@ -5,8 +5,7 @@
   justify-content: center;
   min-height: 100vh;
   gap: 32px;
-   background: var(--background-color-dark);
-
+  background: var(--background-color-dark);
 }
 
 .loaderContainer__text {
@@ -71,6 +70,10 @@
 
 .homePageContainer {
   padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
   height: 100%;
   background-color: var(--background-color-dark);
@@ -93,3 +96,16 @@
 .userGenres, .generatePlaylist {
 	width: 66vw;
 }
+
+.webPlaybackActive {
+  visibility: visible;
+}
+
+.webPlaybackHidden {
+  visibility: hidden;
+}
+
+
+
+
+

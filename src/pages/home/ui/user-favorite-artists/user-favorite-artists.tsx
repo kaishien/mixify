@@ -10,7 +10,7 @@ import styles from "./user-favorite-artists.module.css";
 
 export const UserFavoriteArtists = observer(() => {
 	const mixGenresService = container.get<MixGenresService>(
-		MixGenresServiceContainerToken.MixGenresService,
+		MixGenresServiceContainerToken
 	);
 
 	const top20Artists = mixGenresService.favoritesListenedArtists.slice(0, 20);

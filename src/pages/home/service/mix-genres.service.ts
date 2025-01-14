@@ -9,9 +9,7 @@ import { LoaderProcessor } from "~/shared/lib/loader-processor";
 import type { MixedPlaylistService } from "./mixed-playlist.service";
 import { MixedPlaylistServiceContainerToken } from "./mixed-playlist.service";
 
-export const MixGenresServiceContainerToken = {
-  MixGenresService: Symbol("MixGenresService"),
-};
+export const MixGenresServiceContainerToken = Symbol("MixGenresService");
 
 interface TrackWithArtist {
   track: string;
@@ -124,7 +122,7 @@ export class MixGenresService implements IService {
     this.mixedPlaylistService.updateMixedPlaylist([]);
 
     try {
-      const lastAddedTracks = this.getRandomTracksFromFavorites(this.CONFIG.RANDOM_TRACKS_COUNT);
+      const lastAddedTracks = this.mapFavoriteTracksWithArtist.slice(0, this.CONFIG.RANDOM_TRACKS_COUNT);
       if (!lastAddedTracks.length) {
         console.error("No tracks found in favorites");
         return;
@@ -170,8 +168,8 @@ export class MixGenresService implements IService {
     for (const result of results) {
       if (!result.similarartists?.artist) continue;
 
-      const randomArtists = shuffleArray(result.similarartists.artist)
-        .sort(() => 0.5 - Math.random()).slice(0, 3)
+      const randomArtists = result.similarartists.artist
+        .slice(0, 2)
         .filter(artist => {
           if (uniqueArtists.has(artist.name)) {
             return false;

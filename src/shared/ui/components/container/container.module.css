@@ -6,3 +6,9 @@
 	padding: var(--spacing-md);
 	margin: 0 auto;
 }
+
+@media (max-width: 768px) {
+	.container {
+		padding: var(--spacing-sm);
+	}
+}

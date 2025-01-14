@@ -33,7 +33,7 @@ container.bind<INotificationService>(NotificationServiceToken).to(NotificationSe
 const registryServices = () => {
 	container.bind(AuthServiceContainerToken.AuthService).to(AuthService).inSingletonScope();
 	container.bind(UserServiceContainerToken.UserService).to(UserService).inSingletonScope();
-	container.bind(MixGenresServiceContainerToken.MixGenresService).to(MixGenresService).inSingletonScope();
+	container.bind(MixGenresServiceContainerToken).to(MixGenresService).inSingletonScope();
 	container
 		.bind<MixedPlaylistService>(MixedPlaylistServiceContainerToken)
 		.toDynamicValue(() => {

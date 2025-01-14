@@ -5,15 +5,24 @@ import { Container, Panel, VinylLoader } from "~/shared/ui/components";
 import { UserProfile } from "./ui/user-profile";
 import { WebPlayback } from "./ui/web-playback/web-playback";
 
+import clsx from "clsx";
+import { useEffect } from "react";
 import { AuthServiceContainerToken } from "~/services/auth";
 import styles from "./home-page.module.css";
-import { type MixGenresService, MixGenresServiceContainerToken } from "./service/mix-genres.service";
+import {
+	type MixGenresService,
+	MixGenresServiceContainerToken,
+} from "./service/mix-genres.service";
+import type { MixedPlaylistService } from "./service/mixed-playlist.service";
+import { MixedPlaylistServiceContainerToken } from "./service/mixed-playlist.service";
 import { GeneratePlaylist } from "./ui/generate-playlist/generate-playlist";
 import { UserFavoriteArtists } from "./ui/user-favorite-artists/user-favorite-artists";
 import { UserGenres } from "./ui/user-genres/user-genres";
 
 const PageLoader = observer(() => {
-	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken.MixGenresService);
+	const mixGenresService = useInjection<MixGenresService>(
+		MixGenresServiceContainerToken,
+	);
 	const text = mixGenresService.initialLoadingData.loadingStatus;
 
 	return (
@@ -38,7 +47,14 @@ const PageLoader = observer(() => {
 });
 
 const Home = observer(() => {
-	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken.MixGenresService);
+	const mixGenresService = useInjection<MixGenresService>(
+		MixGenresServiceContainerToken
+	);
+	const mixPlaylistService = useInjection<MixedPlaylistService>(MixedPlaylistServiceContainerToken);
+
+	useEffect(() => {
+		document.body.style.backgroundColor = "var(--background-color-dark)";
+	}, []);
 
 	if (mixGenresService.initialLoadingData.isLoading) {
 		return <PageLoader />;
@@ -63,7 +79,13 @@ const Home = observer(() => {
 						<GeneratePlaylist />
 					</Panel>
 				</div>
-				<div className={styles.webPlayback}>
+				<div
+					className={clsx(
+						mixPlaylistService.playerService.currentActiveTrackId
+							? styles.webPlayback
+							: styles.webPlaybackHidden,
+					)}
+				>
 					<Panel padding="lg">
 						<WebPlayback />
 					</Panel>
@@ -76,6 +98,6 @@ const Home = observer(() => {
 export const HomePage = withContainer(Home, [
 	UserServiceContainerToken.UserService,
 	AuthServiceContainerToken.AuthService,
-	MixGenresServiceContainerToken.MixGenresService,
+	MixGenresServiceContainerToken,
+	MixedPlaylistServiceContainerToken,
 ]);
-

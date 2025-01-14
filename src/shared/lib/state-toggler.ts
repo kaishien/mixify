@@ -3,8 +3,9 @@ import { makeAutoObservable } from "mobx";
 export class StateToggler {
   private isToggled = false;
 
-  constructor() {
+  constructor(defaultState = false) {
     makeAutoObservable(this);
+    this.set(defaultState);
   }
 
   toggle() {

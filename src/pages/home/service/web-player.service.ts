@@ -5,7 +5,7 @@ export class WebPlayerService {
   playerInstance: Spotify.Player | null = null;
   currentTrack: Spotify.Track | null = null;
   isPaused = false;
-  isPlayerReady = new StateToggler();
+  playerReady = new StateToggler();
   deviceId = "";
 
   constructor() {
