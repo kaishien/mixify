@@ -16,6 +16,11 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 4px;
+  margin-bottom: var(--spacing-lg);
+
+  @include respond-to-tablet {
+    margin-bottom: 0;
+  }
 
   h1 {
     font-size: 1.5rem;

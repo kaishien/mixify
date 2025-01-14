@@ -9,7 +9,7 @@ import { memo, useCallback } from "react";
 import type { Track as SpotifyTrack } from "spotify-types";
 import PauseIcon from "~/shared/ui/assets/player-icons/pause.svg?react";
 import PlayIcon from "~/shared/ui/assets/player-icons/play.svg?react";
-import styles from "./generate-playlist.module.css";
+import styles from "./generate-playlist.module.scss";
 
 const formatDuration = (ms: number) => {
 	const minutes = Math.floor(ms / 60000);

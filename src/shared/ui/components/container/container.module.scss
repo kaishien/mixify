@@ -2,13 +2,16 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--spacing-md);
+	width: 100%;
 	max-width: 1200px;
 	padding: var(--spacing-md);
 	margin: 0 auto;
-}
 
-@media (max-width: 768px) {
-	.container {
+	@include respond-to-tablet {
 		padding: var(--spacing-sm);
+	}
+
+	@include respond-to-desktop {
+		padding: var(--spacing-md);
 	}
 }

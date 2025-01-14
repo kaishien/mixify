@@ -7,42 +7,42 @@ import type { MixGenresService } from "../../service/mix-genres.service";
 import { MixGenresServiceContainerToken } from "../../service/mix-genres.service";
 import type { MixedPlaylistService } from "../../service/mixed-playlist.service";
 import { MixedPlaylistServiceContainerToken } from "../../service/mixed-playlist.service";
-import styles from "./generate-playlist.module.css";
+import styles from "./generate-playlist.module.scss";
 
 const PlaylistControls = observer(() => {
 	const mixedPlaylistService = useInjection<MixedPlaylistService>(
 		MixedPlaylistServiceContainerToken,
 	);
 
-	const mixGenresService = useInjection<MixGenresService>(
-		MixGenresServiceContainerToken
-	);
+	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken);
 
 	return (
 		<div className={styles.generatedPlaylist__controls}>
-			<Button
-				size="small"
-				icon={<PlayIcon />}
-				variant="dark"
-				onClick={() => mixedPlaylistService.playMixedPlaylist()}
-			>
-				Play All
-			</Button>
-			<Button
-				className={styles.generatedPlaylist__addButton}
-				isLoading={mixedPlaylistService.addingToLibraryLoader.isLoading}
-				size="small"
-				icon={<PlaylistAddIcon />}
-				variant="dark"
-				onClick={() =>
-					mixedPlaylistService.addMixedPlaylistToUserLibrary({
-						name: "Mixified Playlist",
-						description: "Your mixed playlist",
-					})
-				}
-			>
-				Add to Library
-			</Button>
+			<div className={styles.generatedPlaylist__controlsPlaylist}>
+				<Button
+					size="small"
+					icon={<PlayIcon />}
+					variant="dark"
+					onClick={() => mixedPlaylistService.playMixedPlaylist()}
+				>
+					Play All
+				</Button>
+				<Button
+					className={styles.generatedPlaylist__addButton}
+					isLoading={mixedPlaylistService.addingToLibraryLoader.isLoading}
+					size="small"
+					icon={<PlaylistAddIcon />}
+					variant="dark"
+					onClick={() =>
+						mixedPlaylistService.addMixedPlaylistToUserLibrary({
+							name: "Mixified Playlist",
+							description: "Your mixed playlist",
+						})
+					}
+				>
+					Add to Library
+				</Button>
+			</div>
 			<Button size="small" variant="secondary" onClick={() => mixGenresService.createMixPlaylist()}>
 				Mixify
 			</Button>

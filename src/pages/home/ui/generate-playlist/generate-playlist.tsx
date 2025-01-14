@@ -10,7 +10,7 @@ import { MixedPlaylistServiceContainerToken } from "../../service/mixed-playlist
 import { Playlist } from "./playlist";
 import { PlaylistHeader } from "./playlist-header";
 
-import styles from "./generate-playlist.module.css";
+import styles from "./generate-playlist.module.scss";
 import { ScreenLoader } from "./screen-loader";
 
 const GeneratedPlaylist = observer(() => {

@@ -40,7 +40,7 @@
 	/* Media queries */
 	--mobile-width: 768px;
 	--tablet-width: 1024px;
-	--desktop-width: 1200px;
+	--desktop-width: 1280px;
 }
 
 @font-face {

@@ -3,7 +3,8 @@ import { useInjection } from "~/config";
 import { withContainer } from "~/config/ioc/with-container";
 import { type AuthService, AuthServiceContainerToken } from "~/services/auth";
 import { Button } from "~/shared/ui/components";
-import styles from "./login-page.module.css";
+
+import styles from "./login-page.module.scss";
 
 type LoginButtonProps = {
 	onClick: () => void;
@@ -35,7 +36,7 @@ const LoginPageContent = observer(() => {
 		</main>
 	);
 });
-
 export const LoginPage = withContainer(LoginPageContent, [
 	AuthServiceContainerToken.AuthService,
 ]);
+

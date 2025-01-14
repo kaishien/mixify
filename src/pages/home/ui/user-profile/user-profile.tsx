@@ -4,7 +4,7 @@ import type { UserService } from "~/services/user";
 import { UserServiceContainerToken } from "~/services/user";
 import { Avatar, Badge, ButtonIcon, Typography } from "~/shared/ui/components";
 
-import styles from "./user-profile.module.css";
+import styles from "./user-profile.module.scss";
 
 import type { AuthService } from "~/services/auth";
 import { AuthServiceContainerToken } from "~/services/auth";

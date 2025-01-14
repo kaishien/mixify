@@ -46,9 +46,12 @@
 }
 
 @keyframes blink {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
@@ -69,43 +72,97 @@
 }
 
 .homePageContainer {
-  padding: 2rem 0;
+  padding: 1rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   min-height: 100vh;
   height: 100%;
   background-color: var(--background-color-dark);
+
+  @include respond-to-tablet {
+    justify-content: center;
+  }
+
+  @include respond-to-desktop {
+    padding: 2rem 0;
+  }
 }
 
 .homePage {
-	margin-top: 2rem;
+  @include respond-to-desktop {
+    margin-top: 2rem;
+  }
 }
 
-.userProfile, .userFavoriteArtists {
-	width: 20vw;
+
+.userProfile,
+.userFavoriteArtists {
+  width: 100%;
+
+  @include respond-to-tablet {
+    width: 30vw;
+  }
+
+  @include respond-to-desktop {
+    width: 20vw;
+  }
+}
+
+.userFavoriteArtists {
+  display: none;
+
+  @include respond-to-tablet {
+    display: block;
+  }
 }
 
 .homePage__top,
 .homePage__bottom {
-	display: flex;
-	gap: var(--spacing-md);
+  display: flex;
+  gap: var(--spacing-md);
 }
 
-.userGenres, .generatePlaylist {
-	width: 66vw;
+.userGenres,
+.generatePlaylist {
+  width: 66vw;
+}
+
+.generatePlaylist {
+  width: 100%;
+
+  @include respond-to-tablet {
+    width: 66vw;
+    height: auto;
+  }
+}
+
+.generatePlaylistActive {
+  height: auto;
+}
+
+.generatePlaylistInactive {
+  height: calc(100vh - 100px);
+  min-height: 300px;
+
+  @include respond-to-tablet {
+    height: auto;
+  }
+}
+
+.userGenres {
+  display: none;
+
+  @include respond-to-tablet {
+    display: block;
+  }
 }
 
 .webPlaybackActive {
-  visibility: visible;
+  display: block;
+  height: 100%;
 }
 
 .webPlaybackHidden {
-  visibility: hidden;
+  display: none;
 }
-
-
-
-
-

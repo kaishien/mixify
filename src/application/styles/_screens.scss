@@ -1,0 +1,23 @@
+$breakpoint-xs: 0;
+$breakpoint-sm: 768px;
+$breakpoint-md: 960px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1440px;
+
+@mixin respond-to-mobile {
+  @media (min-width: #{$breakpoint-xs}) {
+    @content;
+  }
+}
+
+@mixin respond-to-tablet {
+  @media (min-width: #{$breakpoint-sm}) {
+    @content;
+  }
+}
+
+@mixin respond-to-desktop {
+  @media (min-width: #{$breakpoint-lg}) {
+    @content;
+  }
+}

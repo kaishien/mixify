@@ -14,6 +14,17 @@ export default defineConfig({
 		}),
 		svgr(),
 	],
+	css: {
+		preprocessorOptions: {
+			scss: {
+				api: "modern-compiler",
+				additionalData: `
+				@use "~/application/styles/_screens" as *;
+			`,
+			includePaths: ['src']
+			},
+		},
+	},
 	resolve: {
 		alias: {
 			"~": resolve(__dirname, "src"),

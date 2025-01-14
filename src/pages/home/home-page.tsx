@@ -8,7 +8,7 @@ import { WebPlayback } from "./ui/web-playback/web-playback";
 import clsx from "clsx";
 import { useEffect } from "react";
 import { AuthServiceContainerToken } from "~/services/auth";
-import styles from "./home-page.module.css";
+import styles from "./home-page.module.scss";
 import {
 	type MixGenresService,
 	MixGenresServiceContainerToken,
@@ -20,9 +20,7 @@ import { UserFavoriteArtists } from "./ui/user-favorite-artists/user-favorite-ar
 import { UserGenres } from "./ui/user-genres/user-genres";
 
 const PageLoader = observer(() => {
-	const mixGenresService = useInjection<MixGenresService>(
-		MixGenresServiceContainerToken,
-	);
+	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken);
 	const text = mixGenresService.initialLoadingData.loadingStatus;
 
 	return (
@@ -47,13 +45,14 @@ const PageLoader = observer(() => {
 });
 
 const Home = observer(() => {
-	const mixGenresService = useInjection<MixGenresService>(
-		MixGenresServiceContainerToken
-	);
+	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken);
 	const mixPlaylistService = useInjection<MixedPlaylistService>(MixedPlaylistServiceContainerToken);
 
 	useEffect(() => {
 		document.body.style.backgroundColor = "var(--background-color-dark)";
+		return () => {
+			document.body.style.backgroundColor = "var(--background-color-light)";
+		};
 	}, []);
 
 	if (mixGenresService.initialLoadingData.isLoading) {
@@ -75,7 +74,15 @@ const Home = observer(() => {
 					<Panel className={styles.userFavoriteArtists} padding="lg">
 						<UserFavoriteArtists />
 					</Panel>
-					<Panel className={styles.generatePlaylist} padding="lg">
+					<Panel
+						className={clsx(
+							styles.generatePlaylist,
+							mixPlaylistService.mixedPlaylist.length > 0
+								? styles.generatePlaylistActive
+								: styles.generatePlaylistInactive,
+						)}
+						padding="lg"
+					>
 						<GeneratePlaylist />
 					</Panel>
 				</div>
