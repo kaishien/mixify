@@ -28,6 +28,27 @@ interface FavoritesArtists {
   id: string;
 }
 
+interface LastFMArtist {
+  name: string;
+  match: string | number;
+  mbid?: string;
+  url?: string;
+  image?: Array<{ '#text': string; size: string }>;
+  streamable?: string | number;
+}
+
+interface LastFMResponse {
+  similarartists?: {
+    artist: LastFMArtist[];
+  };
+  toptracks?: {
+    track: Array<{
+      name: string;
+      "@attr": { rank: string };
+    }>;
+  };
+}
+
 @injectable()
 export class MixGenresService implements IService {
   favoritesTracks: Track[] = [];
@@ -42,30 +63,28 @@ export class MixGenresService implements IService {
   initialLoadingData = new LoaderProcessor();
   mixifyLoadingData = new LoaderProcessor();
 
-  private readonly CONFIG = {
-    RANDOM_TRACKS_COUNT: 20,
-    SIMILAR_TRACKS_PER_ITEM: 3,
-    MAX_TRACKS_PER_ARTIST: 2,
-    MAX_PLAYLIST_SIZE: 100,
-  } as const;
-
   constructor(
     @inject(Api) private api: Api,
     @inject(MixedPlaylistServiceContainerToken) private mixedPlaylistService: MixedPlaylistService,
   ) {
     makeAutoObservable(this);
+    
     this.asyncOperation = new AsyncOperation();
 
     reaction(
-      () => this.listenGenres,
-      () => {
-        this.calculateCountListenGenres();
-        this.calculateFavoritesListenedArtists();
+      () => this.listenGenres.slice(),
+      (genres) => {
+        if (genres.length > 0) {
+          this.calculateCountListenGenres();
+          this.calculateFavoritesListenedArtists();
+        }
       },
+      { fireImmediately: false }
     );
   }
 
   private updateListenGenres(listenGenres: string[]) {
+    if (JSON.stringify(this.listenGenres) === JSON.stringify(listenGenres)) return;
     this.listenGenres = listenGenres;
   }
 
@@ -118,158 +137,205 @@ export class MixGenresService implements IService {
   }
 
   async createMixPlaylist() {
+    if (this.mixifyLoadingData.isLoading) return;
     this.mixifyLoadingData.setIsLoading(true);
     this.mixedPlaylistService.updateMixedPlaylist([]);
 
     try {
-      const lastAddedTracks = this.getRandomTracksFromFavorites(this.CONFIG.RANDOM_TRACKS_COUNT);
-      if (!lastAddedTracks.length) {
-        console.error("No tracks found in favorites");
-        return;
-      }
-
-      const similarTracks = await this.getSimilarArtistsForSelection(lastAddedTracks);
+      const similarTracks = await this.findSimilarTracks();
       if (!similarTracks.length) {
         console.error("No similar tracks found");
         return;
       }
 
-      const mixedTracks = await this.searchAndFilterTracks(similarTracks);
+      const mixedTracks = await this.searchTracksInSpotify(similarTracks);
       if (!mixedTracks.length) {
         console.error("No track URIs found after search");
         return;
       }
 
       this.mixedPlaylistService.updateMixedPlaylist(mixedTracks);
-
     } catch (error) {
       console.error("Error creating mix playlist:", error);
-      throw error;
     } finally {
       this.mixifyLoadingData.setIsLoading(false);
     }
   }
 
-  private getRandomTracksFromFavorites(count: number): TrackWithArtist[] {
-    const shuffledTracks = this.mapFavoriteTracksWithArtist.sort(() => 0.5 - Math.random());
-    return shuffledTracks.slice(0, count);
+  private async findSimilarTracks(): Promise<SimilarTrackInfo[]> {
+    const selectedGenres = this.selectGenresForMix();
+    const genreResults = await this.processGenres(selectedGenres);
+    return this.combineGenreResults(genreResults);
   }
 
-  private async getSimilarArtistsForSelection(tracks: TrackWithArtist[]): Promise<SimilarTrackInfo[]> {
-    const promises = tracks.map(track =>
-      this.api.recommendations.getSimilarArtists(track.artist)
+  private selectGenresForMix() {
+    const sortedGenres = Object.entries(this.favoriteListenedGenres)
+      .sort(([, countA], [, countB]) => countB - countA);
+
+    const topGenres = shuffleArray(sortedGenres.slice(0, 20)).slice(0, 12);
+    const randomGenres = shuffleArray(sortedGenres.slice(20)).slice(0, 6);
+
+    return [...topGenres, ...randomGenres];
+  }
+
+  private async processGenres(genreCounts: Array<[string, number]>) {
+		const processedArtists = new Set<string>();
+    const allRequests = genreCounts.map(([genre, count]) => 
+      this.processGenre(genre, count, processedArtists)
     );
 
-    const results = await Promise.all(promises);
+    return await Promise.all(allRequests);
+  }
 
-    const uniqueArtists = new Set<string>();
-    const selectedArtists = [];
+  private async processGenre(genre: string, count: number, processedArtists: Set<string>) {
+    const genreArtists = this.selectArtistsForGenre(genre);
+    if (!genreArtists.length) return { genre, tracks: [] };
+
+    const similarArtists = await this.findSimilarArtists(genreArtists, processedArtists);
+    const tracks = await this.getTopTracksForArtists(similarArtists);
+    
+    const tracksNeeded = Math.max(8, Math.round((count / this.getMaxGenreCount()) * 15));
+    return { genre, tracks: shuffleArray(tracks).slice(0, tracksNeeded) };
+  }
+
+  private selectArtistsForGenre(genre: string) {
+    return shuffleArray(
+      Array.from(this.favoriteArtists.values())
+        .filter(artist => artist.genres?.includes(genre))
+    ).slice(0, 3);
+  }
+
+  private async findSimilarArtists(artists: Artist[], processedArtists: Set<string>) {
+    const similarArtistsPromises = artists.map(artist =>
+      this.api.recommendations.getSimilarArtists(artist.name)
+    );
+
+    const results = await Promise.all(similarArtistsPromises);
+    return this.filterSimilarArtists(results, processedArtists);
+  }
+
+  private filterSimilarArtists(results: LastFMResponse[], processedArtists: Set<string>) {
+    const highMatchArtists = new Set<string>();
+		const MIN_MATCH_SCORE = 0.75;
+		const MAX_ARTISTS_COUNT = 5;
 
     for (const result of results) {
-      if (!result.similarartists?.artist) continue;
+      if (!result?.similarartists?.artist) continue;
 
-      const randomArtists = result.similarartists.artist
-        .slice(0, 2)
+      const matchingArtists = result.similarartists.artist
         .filter(artist => {
-          if (uniqueArtists.has(artist.name)) {
-            return false;
-          }
-          uniqueArtists.add(artist.name);
-          return true;
-        });
+          const matchScore = Number(artist.match);
+          return matchScore >= MIN_MATCH_SCORE && !processedArtists.has(artist.name);
+        })
+      
 
-      selectedArtists.push(...randomArtists);
-    }
-
-
-    const topTracksPromises = selectedArtists.map(artist =>
-      this.api.recommendations.getTopArtistsTracks(artist.name)
-    );
-
-    const topTracksResults = await Promise.all(topTracksPromises);
-
-    return topTracksResults.flatMap(result => {
-      if (!result.toptracks?.track) return [];
-      return result.toptracks.track
-        .slice(0, 1)
-        .map(track => ({
-          name: track.name,
-          artist: track.artist.name,
-        }));
-    });
-  }
-
-  // private async getSimilarTracksForSelection(tracks: TrackWithArtist[]): Promise<SimilarTrackInfo[]> {
-  //   const promises = tracks.map(track =>
-  //     this.asyncOperation.execute<lastFmTypes.LastFMTrackGetSimilarResponse>(
-  //       async () => await this.api.recommendations.getSimilarTracks(track.artist, track.track)
-  //     )
-  //   );
-
-  //   const results = await Promise.all(promises);
-
-  //   return results.filter(({ data }) => data && data.similartracks.track.length > 0)
-  //     .flatMap(item => {
-  //       if (!item.data) return [];
-  //       return shuffleArray(item.data.similartracks.track)
-  //         .slice(0, this.CONFIG.SIMILAR_TRACKS_PER_ITEM)
-  //         .map(track => ({
-  //           name: track.name,
-  //           artist: track.artist.name,
-  //         }))
-  //     });
-  // }
-
-  // private async getSimilarTracksByGenre() {
-  //   const promises = shuffleArray(this.listenGenres.slice(0, 20)).map(genre =>
-  //     this.asyncOperation.execute(
-  //       async () => await this.api.recommendations.getSimilarTracksByGenre(genre)
-  //     )
-  //   );
-
-  //   const results = await Promise.all(promises.slice(0, 20));
-
-  //   return results.filter(({ data }) => data && data.tracks.track.length > 0)
-  //     .flatMap(item => {
-  //       if (!item.data) return [];
-  //       return shuffleArray(item.data.tracks.track)
-  //         .slice(0, 10)
-  //         .map(track => ({
-  //           name: track.name,
-  //           artist: track.artist.name,
-  //         }))
-  //     });
-  // }
-
-  private async searchAndFilterTracks(tracksInfo: Array<{ name: string; artist: string }>) {
-    const searchPromises = tracksInfo.map(track => {
-      const query = `track:${track.name} artist:${track.artist}`;
-      return this.asyncOperation.execute(
-        async () => await this.api.search.search(query, { type: ["track"] })
-      );
-    });
-
-    const searchResults = await Promise.all(searchPromises);
-    const mixedTracks: Track[] = [];
-    const artistCount: Record<string, number> = {};
-
-    for (const data of searchResults) {
-      const result = data.data;
-      if (result?.tracks?.items) {
-        const filteredTracks = result.tracks.items.filter(track => {
-          const artistId = track.artists[0].id;
-          const currentCount = artistCount[artistId] || 0;
-          if (currentCount < 2) {
-            artistCount[artistId] = currentCount + 1;
-            return true;
-          }
-          return false;
-        });
-        mixedTracks.push(...filteredTracks);
+      for (const artist of shuffleArray(matchingArtists).slice(0, MAX_ARTISTS_COUNT)) {
+        highMatchArtists.add(artist.name);
+        processedArtists.add(artist.name);
       }
     }
 
-    return shuffleArray(mixedTracks).slice(0, 100);
+    return highMatchArtists;
+  }
+
+  private async getTopTracksForArtists(artists: Set<string>) {
+    const topTracksPromises = Array.from(artists).map(artist =>
+      this.api.recommendations.getTopArtistsTracks(artist)
+    );
+
+    const results = await Promise.all(topTracksPromises);
+    return this.processTopTracks(results, artists);
+  }
+
+  private processTopTracks(results: LastFMResponse[], artists: Set<string>) {
+    const tracks: SimilarTrackInfo[] = [];
+
+    results.forEach((topTracks, index) => {
+      if (!topTracks?.toptracks?.track) return;
+
+      const artistName = Array.from(artists)[index];
+      const artistTracks = this.selectTopTracksForArtist(topTracks, artistName);
+      tracks.push(...artistTracks);
+    });
+
+    return tracks;
+  }
+
+  private selectTopTracksForArtist(topTracks: LastFMResponse, artistName: string) {
+    if (!topTracks.toptracks?.track) return [];
+
+    return shuffleArray(
+      topTracks.toptracks.track
+        .filter(track => {
+          const rank = Number(track["@attr"].rank);
+          return rank >= 1 && rank <= 10;
+        })
+    )
+      .slice(0, 2)
+      .map(track => ({
+        name: track.name,
+        artist: artistName
+      }));
+  }
+
+  private getMaxGenreCount() {
+    return Math.max(...Object.values(this.favoriteListenedGenres));
+  }
+
+  private async searchTracksInSpotify(tracksInfo: Array<{ name: string; artist: string }>) {    
+    const allMixedTracks: Track[] = [];
+    const artistCount: Record<string, number> = {};
+    const trackSet = new Set<string>();
+    
+    const chunks = chunkArray(tracksInfo, 20);
+
+    for (const chunk of chunks) {
+      const searchPromises = chunk.map(track => {
+        const cleanTrackName = track.name.replace(/[^\w\s]/g, '').trim();
+        const cleanArtistName = track.artist.replace(/[^\w\s]/g, '').trim();
+        const query = `${cleanTrackName} ${cleanArtistName}`;
+        
+        return this.asyncOperation.execute(
+          async () => await this.api.search.search(query, { 
+            type: ["track"],
+            limit: 20
+          })
+        );
+      });
+
+      const searchResults = await Promise.all(searchPromises);
+
+      for (const [index, data] of searchResults.entries()) {
+        const result = data.data;
+        const originalTrack = chunk[index];
+        
+        if (!result?.tracks?.items?.length) continue;
+
+        const matches = result.tracks.items
+          .filter(track => {
+            const trackKey = `${track.name}:${track.artists[0].name}`.toLowerCase();
+            return !trackSet.has(trackKey) && 
+              track.artists[0].name.toLowerCase().includes(originalTrack.artist.toLowerCase());
+          })
+          .slice(0, 2);
+
+        for (const match of matches) {
+          const artistId = match.artists[0].id;
+          const currentCount = artistCount[artistId] || 0;
+
+          if (currentCount < 5) {
+            const trackKey = `${match.name}:${match.artists[0].name}`.toLowerCase();
+            if (!trackSet.has(trackKey)) {
+              trackSet.add(trackKey);
+              artistCount[artistId] = currentCount + 1;
+              allMixedTracks.push(match);
+            }
+          }
+        }
+      }
+    }
+
+    return shuffleArray(allMixedTracks).slice(0, 100);
   }
 
   private calculateCountListenGenres() {
@@ -358,5 +424,25 @@ export class MixGenresService implements IService {
         }
       }
     }
+  }
+
+  private combineGenreResults(results: Array<{ genre: string; tracks: SimilarTrackInfo[] }>): SimilarTrackInfo[] {
+    const allTracks: SimilarTrackInfo[] = [];
+    let continueAdding = true;
+
+    while (continueAdding) {
+      continueAdding = false;
+      for (const { tracks } of results) {
+        if (tracks.length > 0) {
+          const track = tracks.pop();
+          if (track) {
+            allTracks.push(track);
+            continueAdding = true;
+          }
+        }
+      }
+    }
+
+    return shuffleArray(allTracks);
   }
 }
