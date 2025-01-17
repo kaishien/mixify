@@ -28,7 +28,7 @@ container.bind<HttpClient>(HttpClientToken.LastFmBase)
 	.toDynamicValue(() => new HttpClient(config.lastFmBaseApiUrl))
 	.inSingletonScope();
 
-container.bind<INotificationService>(NotificationServiceToken).to(NotificationService).inSingletonScope();	
+container.bind<INotificationService>(NotificationServiceToken).to(NotificationService).inSingletonScope();
 
 const registryServices = () => {
 	container.bind(AuthServiceContainerToken.AuthService).to(AuthService).inSingletonScope();
@@ -38,7 +38,7 @@ const registryServices = () => {
 		.bind<MixedPlaylistService>(MixedPlaylistServiceContainerToken)
 		.toDynamicValue(() => {
 			return new MixedPlaylistService(
-				container.get(Api), 
+				container.get(Api),
 				container.get(UserServiceContainerToken.UserService),
 				container.get(NotificationServiceToken),
 			);

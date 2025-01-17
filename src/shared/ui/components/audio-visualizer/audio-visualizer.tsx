@@ -14,7 +14,7 @@ export const AudioVisualizer = ({ isPlaying }: AudioVisualizerProps) => {
 	return (
 		<AnimatePresence>
 			{isPlaying && (
-				<motion.div 
+				<motion.div
 					className={styles.playingAnimation}
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}

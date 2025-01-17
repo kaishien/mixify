@@ -24,7 +24,7 @@
   }
 }
 
-.generatedPlaylist__controlsPlaylist{
+.generatedPlaylist__controlsPlaylist {
   flex: 1 1 auto;
   display: flex;
   gap: var(--spacing-md);
@@ -44,7 +44,7 @@
   gap: var(--spacing-md);
   padding-bottom: var(--spacing-md) 0;
   width: 100%;
-  
+
   @include respond-to-tablet {
     flex-direction: row;
     width: auto;
@@ -72,7 +72,7 @@
   flex-wrap: wrap;
   padding-bottom: var(--spacing-md);
   flex-direction: column;
-  
+
   @include respond-to-tablet {
     justify-content: space-between;
     align-items: center;
@@ -105,18 +105,18 @@
   margin: 0;
   max-height: 558px;
   list-style: none;
-  
+
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  
+
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
@@ -153,12 +153,10 @@
   position: absolute;
   inset: 0;
   border-radius: var(--border-radius-sm);
-  background: linear-gradient(
-    to left,
-    rgba(254, 193, 71, 0.493) 0%,
-    rgba(223, 166, 50, 0.389) 30%,
-    rgba(228, 157, 16, 0.304) 90%
-  );
+  background: linear-gradient(to left,
+      rgba(254, 193, 71, 0.493) 0%,
+      rgba(223, 166, 50, 0.389) 30%,
+      rgba(228, 157, 16, 0.304) 90%);
   opacity: 0;
   transition: opacity 0.2s ease-out;
   z-index: -1;
@@ -175,13 +173,13 @@
 }
 
 .track__button:focus-visible {
-	outline: none;
-	box-shadow: 0 0 0 2px var(--bg-panel-color), 0 0 0 4px var(--focus-ring-color);
-	transform: scale(1.03);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-panel-color), 0 0 0 4px var(--focus-ring-color);
+  transform: scale(1.03);
 }
 
 .track__button:focus-visible::before {
-	opacity: 1;
+  opacity: 1;
 }
 
 .track__index {

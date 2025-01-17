@@ -66,9 +66,8 @@ function ContainerHOC<TProps extends object>(
 		);
 	}
 
-	WithContainer.displayName = `WithContainer(${
-		WrappedComponent.displayName || WrappedComponent.name || "Component"
-	})`;
+	WithContainer.displayName = `WithContainer(${WrappedComponent.displayName || WrappedComponent.name || "Component"
+		})`;
 
 	return WithContainer;
 }

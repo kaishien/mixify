@@ -2,8 +2,8 @@ import { observer } from "mobx-react-lite";
 import { container } from "~/application/register-dependencies";
 import { Badge, Typography, useScrollOverlay } from "~/shared/ui/components";
 import {
-  type MixGenresService,
-  MixGenresServiceContainerToken,
+	type MixGenresService,
+	MixGenresServiceContainerToken,
 } from "../../service/mix-genres.service";
 
 import styles from "./user-genres.module.css";

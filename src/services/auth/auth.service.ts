@@ -20,7 +20,7 @@ export const AuthServiceContainerToken = {
 export class AuthService implements IService {
 	private readonly asyncOperation: AsyncOperation;
 	private readonly storage: CacheStrategy;
-	
+
 	constructor(
 		@inject(Api) private readonly api: Api,
 		@inject(RouterService) private readonly routerService: RouterService,

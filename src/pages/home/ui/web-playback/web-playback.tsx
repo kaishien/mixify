@@ -21,7 +21,7 @@ export const WebPlayback = observer(() => {
 	);
 
 	const playerService = mixedPlaylistService.playerService;
-	
+
 	const token = authService.getToken();
 
 	useEffect(() => {
@@ -46,7 +46,7 @@ export const WebPlayback = observer(() => {
 				mixedPlaylistService.updateDeviceId(device_id);
 				playerService.playerReady.set(true);
 			});
-			
+
 			player.addListener("not_ready", () => {
 				playerService.playerReady.set(false);
 			});
@@ -67,7 +67,8 @@ export const WebPlayback = observer(() => {
 		};
 	}, [token]);
 
-	if (!playerService.playerReady.state) return <div className={styles.connecting}>Connecting to Spotify...</div>;
+	if (!playerService.playerReady.state)
+		return <div className={styles.connecting}>Connecting to Spotify...</div>;
 
 	return (
 		<div className={styles.player}>

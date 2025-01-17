@@ -5,7 +5,7 @@ import { Application } from "./application/application.tsx";
 import "./index.css";
 
 import { configure } from 'mobx';
-   
+
 configure({ enforceActions: 'always' });
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>

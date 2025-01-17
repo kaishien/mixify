@@ -11,10 +11,10 @@ export const NotificationServiceToken = Symbol.for("NotificationServiceToken");
 
 @injectable()
 export class NotificationService implements INotificationService {
-  private options: ExternalToast = {
-    duration: 5000,
-    position: "top-right",
-  };
+	private options: ExternalToast = {
+		duration: 5000,
+		position: "top-right",
+	};
 
 	showError(message: string) {
 		toast.error(message, this.options);

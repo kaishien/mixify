@@ -42,11 +42,11 @@ interface SearchOptions {
 export class SearchApi {
   constructor(
     @inject(HttpClientToken.SpotifyBase) private spotifyHttp: HttpClient,
-  ) {}
+  ) { }
 
   async search(query: string, options: SearchOptions): Promise<SearchResults> {
     const encodedQuery = encodeURIComponent(query);
-    
+
     const queryParams = new URLSearchParams();
     queryParams.append('q', encodedQuery);
     queryParams.append('type', options.type.join(','));

@@ -68,7 +68,7 @@ export class MixGenresService implements IService {
     @inject(MixedPlaylistServiceContainerToken) private mixedPlaylistService: MixedPlaylistService,
   ) {
     makeAutoObservable(this);
-    
+
     this.asyncOperation = new AsyncOperation();
 
     reaction(
@@ -179,8 +179,8 @@ export class MixGenresService implements IService {
   }
 
   private async processGenres(genreCounts: Array<[string, number]>) {
-		const processedArtists = new Set<string>();
-    const allRequests = genreCounts.map(([genre, count]) => 
+    const processedArtists = new Set<string>();
+    const allRequests = genreCounts.map(([genre, count]) =>
       this.processGenre(genre, count, processedArtists)
     );
 
@@ -193,7 +193,7 @@ export class MixGenresService implements IService {
 
     const similarArtists = await this.findSimilarArtists(genreArtists, processedArtists);
     const tracks = await this.getTopTracksForArtists(similarArtists);
-    
+
     const tracksNeeded = Math.max(8, Math.round((count / this.getMaxGenreCount()) * 15));
     return { genre, tracks: shuffleArray(tracks).slice(0, tracksNeeded) };
   }
@@ -216,8 +216,8 @@ export class MixGenresService implements IService {
 
   private filterSimilarArtists(results: LastFMResponse[], processedArtists: Set<string>) {
     const highMatchArtists = new Set<string>();
-		const MIN_MATCH_SCORE = 0.75;
-		const MAX_ARTISTS_COUNT = 5;
+    const MIN_MATCH_SCORE = 0.75;
+    const MAX_ARTISTS_COUNT = 5;
 
     for (const result of results) {
       if (!result?.similarartists?.artist) continue;
@@ -227,7 +227,7 @@ export class MixGenresService implements IService {
           const matchScore = Number(artist.match);
           return matchScore >= MIN_MATCH_SCORE && !processedArtists.has(artist.name);
         })
-      
+
 
       for (const artist of shuffleArray(matchingArtists).slice(0, MAX_ARTISTS_COUNT)) {
         highMatchArtists.add(artist.name);
@@ -282,11 +282,11 @@ export class MixGenresService implements IService {
     return Math.max(...Object.values(this.favoriteListenedGenres));
   }
 
-  private async searchTracksInSpotify(tracksInfo: Array<{ name: string; artist: string }>) {    
+  private async searchTracksInSpotify(tracksInfo: Array<{ name: string; artist: string }>) {
     const allMixedTracks: Track[] = [];
     const artistCount: Record<string, number> = {};
     const trackSet = new Set<string>();
-    
+
     const chunks = chunkArray(tracksInfo, 20);
 
     for (const chunk of chunks) {
@@ -294,9 +294,9 @@ export class MixGenresService implements IService {
         const cleanTrackName = track.name.replace(/[^\w\s]/g, '').trim();
         const cleanArtistName = track.artist.replace(/[^\w\s]/g, '').trim();
         const query = `${cleanTrackName} ${cleanArtistName}`;
-        
+
         return this.asyncOperation.execute(
-          async () => await this.api.search.search(query, { 
+          async () => await this.api.search.search(query, {
             type: ["track"],
             limit: 20
           })
@@ -308,13 +308,13 @@ export class MixGenresService implements IService {
       for (const [index, data] of searchResults.entries()) {
         const result = data.data;
         const originalTrack = chunk[index];
-        
+
         if (!result?.tracks?.items?.length) continue;
 
         const matches = result.tracks.items
           .filter(track => {
             const trackKey = `${track.name}:${track.artists[0].name}`.toLowerCase();
-            return !trackSet.has(trackKey) && 
+            return !trackSet.has(trackKey) &&
               track.artists[0].name.toLowerCase().includes(originalTrack.artist.toLowerCase());
           })
           .slice(0, 2);

@@ -34,7 +34,7 @@ export class HttpClient {
 
 	private createUrl(path: string, params?: Record<string, string | number | boolean | string[]>): string {
 		const url = new URL(`${this.baseURL}${path}`);
-		
+
 		if (params) {
 			for (const [key, value] of Object.entries(params)) {
 				if (Array.isArray(value)) {
@@ -55,12 +55,12 @@ export class HttpClient {
 		const fullUrl = this.createUrl(url, params);
 
 		const response = await fetch(fullUrl, {
-				headers: {
-					'Authorization': `Bearer ${this.accessToken}`,
-					...headers
-				},
-				...restOptions,
-			});
+			headers: {
+				'Authorization': `Bearer ${this.accessToken}`,
+				...headers
+			},
+			...restOptions,
+		});
 
 		if (response.status === 401) {
 			eventEmitter.emit(Events.TOKEN_EXPIRED);
@@ -109,16 +109,16 @@ export class HttpClient {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		if(response.status === 401) {
+		if (response.status === 401) {
 			eventEmitter.emit(Events.TOKEN_EXPIRED);
 			throw new Error('Token expired');
 		}
 
-		if(response.status === 403) {
+		if (response.status === 403) {
 			eventEmitter.emit(Events.AUTH_ERROR);
 			throw new Error("Auth error");
 		}
-		
+
 		return response.json();
 	}
 

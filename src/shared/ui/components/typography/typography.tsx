@@ -1,5 +1,5 @@
-import { type ReactNode, createElement } from "react";
 import clsx from "clsx";
+import { type ReactNode, createElement } from "react";
 import styles from "./typography.module.css";
 
 type TypographyProps = {

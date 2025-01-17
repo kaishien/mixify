@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import { RouterService } from "~/config";
 import type { IService } from "~/config/service.interface";
-import { AuthServiceContainerToken } from "~/services/auth";
 import type { AuthService } from "~/services/auth";
+import { AuthServiceContainerToken } from "~/services/auth";
 import type { UserService } from "~/services/user";
 import { UserServiceContainerToken } from "~/services/user";
 import { Events, eventEmitter } from "~/shared/event-emmiter";

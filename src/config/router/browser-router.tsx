@@ -1,11 +1,11 @@
+import { createBrowserHistory, type Action, type History, type Location } from "history";
 import {
-	useRef,
-	useState,
+	startTransition as startTransitionImpl,
 	useCallback,
 	useLayoutEffect,
-	startTransition as startTransitionImpl,
+	useRef,
+	useState,
 } from "react";
-import { createBrowserHistory, type History, type Action, type Location } from "history";
 import { Router } from "react-router-dom";
 
 interface BrowserRouterProps {
@@ -31,8 +31,8 @@ export const BrowserRouter = ({
 		historyRef.current = customHistory
 			? customHistory
 			: createBrowserHistory({
-					window,
-				});
+				window,
+			});
 	}
 
 	const history = historyRef.current;

@@ -14,11 +14,11 @@ type ButtonProps = {
 };
 
 const Loader = () => {
-	return <span className={styles.loader}/>
+	return <span className={styles.loader} />
 }
 
 const renderButtonContent = (isLoading: boolean, icon: ReactNode, children: ReactNode) => {
-	if (isLoading) return <Loader/>;
+	if (isLoading) return <Loader />;
 	if (icon) return <>{icon} {children}</>;
 	return children;
 };

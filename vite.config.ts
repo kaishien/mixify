@@ -15,13 +15,16 @@ export default defineConfig({
 		svgr(),
 	],
 	css: {
+		modules: {
+			generateScopedName: "[name]__[local]__[hash:base64:5]"
+		},
 		preprocessorOptions: {
 			scss: {
 				api: "modern-compiler",
 				additionalData: `
 				@use "~/application/styles/_screens" as *;
 			`,
-			includePaths: ['src']
+				includePaths: ['src']
 			},
 		},
 	},

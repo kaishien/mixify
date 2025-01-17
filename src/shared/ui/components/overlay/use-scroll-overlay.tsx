@@ -13,9 +13,9 @@ export const useScrollOverlay = () => {
 		const target = e.currentTarget;
 		const currentScrollTop = target.scrollTop;
 		const isScrollingDown = currentScrollTop > lastScrollTopRef.current;
-		
+
 		lastScrollTopRef.current = currentScrollTop;
-		
+
 		if (isScrollingDown) {
 			setShowTopOverlay(true);
 			setShowBottomOverlay(false);

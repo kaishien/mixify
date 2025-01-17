@@ -44,12 +44,10 @@
 }
 
 .button--secondary {
-	background: linear-gradient(
-		45deg,
-		var(--secondary-accent-color) 0%,
-		var(--primary-accent-color) 50%,
-		var(--secondary-accent-color) 100%
-	);
+	background: linear-gradient(45deg,
+			var(--secondary-accent-color) 0%,
+			var(--primary-accent-color) 50%,
+			var(--secondary-accent-color) 100%);
 	background-size: 200% 200%;
 	background-position: 0% 50%;
 	transition: background-position 0.8s ease-out;
@@ -101,13 +99,14 @@
 	display: inline-block;
 	box-sizing: border-box;
 	animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+	0% {
+		transform: rotate(0deg);
 	}
 
-	@keyframes rotation {
-	0% {
-			transform: rotate(0deg);
-	}
 	100% {
-			transform: rotate(360deg);
+		transform: rotate(360deg);
 	}
-	} 
+}

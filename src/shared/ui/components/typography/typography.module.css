@@ -7,12 +7,12 @@
 
 .typography--weight-bold {
 	font-family: var(--main-bold-font);
-  font-weight: 700;
+	font-weight: 700;
 }
 
 .typography--weight-normal {
 	font-family: var(--main-regular-font);
-  font-weight: 400;
+	font-weight: 400;
 }
 
 .typography--color-dark {

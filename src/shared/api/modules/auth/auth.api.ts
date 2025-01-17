@@ -16,7 +16,7 @@ export class AuthApi {
 	constructor(
 		@inject(HttpClientToken.SpotifyAccount) private httpClient: HttpClient,
 		@inject(HttpClientToken.SpotifyBase) private baseClient: HttpClient,
-	) {}
+	) { }
 
 	async authorize(): Promise<void> {
 		const state = generateRandomString(16);

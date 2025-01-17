@@ -1,5 +1,5 @@
-import React, { type ReactNode } from "react";
 import type { Container } from "inversify";
+import React, { type ReactNode } from "react";
 
 export const IocContext = React.createContext<Container | null>(null);
 

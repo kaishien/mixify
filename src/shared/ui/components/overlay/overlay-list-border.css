@@ -12,22 +12,18 @@
 
 .overlay_top {
 	top: -1px;
-	background: linear-gradient(
-		to bottom,
-		#f5f5f5,
-		rgba(255, 255, 255, 0.6) 20%,
-		rgba(255, 255, 255, 0) 50%
-	);
+	background: linear-gradient(to bottom,
+			#f5f5f5,
+			rgba(255, 255, 255, 0.6) 20%,
+			rgba(255, 255, 255, 0) 50%);
 }
 
 .overlay_bottom {
 	bottom: -1px;
-	background: linear-gradient(
-		to top,
-		#f5f5f5 0%,
-		rgba(255, 255, 255, 0.6) 20%,
-		rgba(255, 255, 255, 0) 50%
-	);
+	background: linear-gradient(to top,
+			#f5f5f5 0%,
+			rgba(255, 255, 255, 0.6) 20%,
+			rgba(255, 255, 255, 0) 50%);
 }
 
 .overlay_top.visible,

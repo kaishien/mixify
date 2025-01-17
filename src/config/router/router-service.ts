@@ -1,6 +1,6 @@
-import { history } from "./history";
-import { injectable } from "inversify";
 import type { To } from "history";
+import { injectable } from "inversify";
+import { history } from "./history";
 
 export interface IRouterService {
   push(to: To, state?: unknown): void;

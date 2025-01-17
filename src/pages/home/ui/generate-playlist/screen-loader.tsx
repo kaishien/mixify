@@ -41,7 +41,7 @@ export const ScreenLoader = () => {
 		const addDisk = () => {
 			const position = sequence[diskCounter % sequence.length];
 			const newDisk = { id: diskCounter, position };
-			
+
 			setDisks(prev => [...prev, newDisk]);
 			setDiskCounter(prev => prev + 1);
 
@@ -105,13 +105,13 @@ export const ScreenLoader = () => {
 	};
 
 	const centerVinylVariants = {
-		hidden: { 
-			opacity: 0, 
+		hidden: {
+			opacity: 0,
 			scale: 0,
 			rotate: -180
 		},
-		visible: { 
-			opacity: 1, 
+		visible: {
+			opacity: 1,
 			scale: 1,
 			rotate: 0,
 			transition: {
@@ -172,8 +172,8 @@ export const ScreenLoader = () => {
 			initial="hidden"
 			animate="visible"
 		>
-			<motion.div 
-				className={styles.screenLoader__gradient} 
+			<motion.div
+				className={styles.screenLoader__gradient}
 				variants={gradientVariants}
 				animate={{
 					rotate: 360,
@@ -218,8 +218,8 @@ export const ScreenLoader = () => {
 						<VinylLoader size="large" />
 					</motion.div>
 				</div>
-				<motion.div 
-					className={styles.screenLoader__text} 
+				<motion.div
+					className={styles.screenLoader__text}
 					variants={textVariants}
 				>
 					<Typography tag="h1" className={styles.screenLoader__title}>
