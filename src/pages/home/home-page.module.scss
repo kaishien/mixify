@@ -125,14 +125,14 @@
 
 .userGenres,
 .generatePlaylist {
-  width: 66vw;
+  width: calc(100% - 20vw);
 }
 
 .generatePlaylist {
   width: 100%;
 
   @include respond-to-tablet {
-    width: 66vw;
+    width: calc(100% - 20vw);
     height: auto;
   }
 }
