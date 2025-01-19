@@ -165,7 +165,11 @@
 
 .track__button:hover,
 .track__button:focus {
-  transform: scale(1.03);
+  transform: scale(1);
+
+  @include respond-to-tablet {
+    transform: scale(1.03);
+  }
 }
 
 .track__button:hover::before,
