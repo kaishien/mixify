@@ -43,9 +43,13 @@
 .screenLoader__title {
   display: inline-block;
   position: relative;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 500;
   white-space: pre;
+
+  @include respond-to-tablet {
+    font-size: 24px;
+  }
 }
 
 .screenLoader__cursor {

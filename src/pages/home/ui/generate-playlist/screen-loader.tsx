@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Typography, VinylLoader } from "~/shared/ui/components";
 
-import styles from "./screen-loader.module.css";
+import styles from "./screen-loader.module.scss";
 
 export const ScreenLoader = () => {
 	const containerVariants = {

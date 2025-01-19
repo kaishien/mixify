@@ -101,11 +101,11 @@
   width: 100%;
 
   @include respond-to-tablet {
-    width: 30vw;
+    width: 300px;
   }
 
   @include respond-to-desktop {
-    width: 20vw;
+    width: 350px
   }
 }
 
@@ -125,14 +125,14 @@
 
 .userGenres,
 .generatePlaylist {
-  width: calc(100% - 20vw);
+  width: 100%
 }
 
 .generatePlaylist {
   width: 100%;
 
   @include respond-to-tablet {
-    width: calc(100% - 20vw);
+    width: 100%;
     height: auto;
   }
 }
@@ -142,7 +142,7 @@
 }
 
 .generatePlaylistInactive {
-  height: calc(100vh - 100px);
+  height: calc(100vh - 235px);
   min-height: 300px;
 
   @include respond-to-tablet {
