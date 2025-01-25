@@ -1,0 +1,240 @@
+.player {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel-color);
+  border-radius: var(--border-radius);
+  gap: var(--spacing-md);
+}
+
+.mainInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-width: 0;
+  width: 30%;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 30%;
+  justify-content: flex-end;
+}
+
+.cover {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--border-radius);
+  object-fit: cover;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 0;
+}
+
+.trackName {
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artistName {
+  color: var(--text-secondary-color);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
+}
+
+.progress {
+  width: 100%;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    var(--primary-accent-color) 0%,
+    var(--primary-accent-color) var(--progress-width, 0%),
+    var(--color-gray-light) var(--progress-width, 0%),
+    var(--color-gray-light) 100%
+  );
+  border-radius: 2px;
+  cursor: pointer;
+  margin: 0;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--primary-accent-color);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  &:hover::-webkit-slider-thumb {
+    opacity: 1;
+  }
+}
+
+.timeContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.time {
+  font-size: 12px;
+  color: var(--text-secondary-color);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+  justify-content: center;
+}
+
+.controlButton {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs);
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: var(--text-primary-color);
+  }
+
+  &:hover {
+    transform: scale(1.1);
+    svg {
+      fill: var(--primary-accent-color);
+    }
+  }
+}
+
+.playPauseButton {
+  @extend .controlButton;
+  background: var(--primary-accent-color);
+  padding: var(--spacing-sm);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--text-inverse-color);
+  }
+
+  &:hover {
+    transform: scale(1.1);
+    svg {
+      fill: var(--text-inverse-color);
+    }
+  }
+}
+
+.additionalControls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+}
+
+.favoriteButton {
+  background: none;
+  border: none;
+  padding: var(--spacing-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--text-secondary-color);
+    transition: fill 0.2s;
+  }
+
+  &.active svg {
+    fill: var(--primary-accent-color);
+  }
+
+  &:hover {
+    transform: scale(1.1);
+    svg {
+      fill: var(--primary-accent-color);
+    }
+  }
+}
+
+.volumeContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--text-secondary-color);
+  }
+}
+
+.volume {
+  width: 100px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    var(--primary-accent-color) 0%,
+    var(--primary-accent-color) var(--volume-width, 50%),
+    var(--color-gray-light) var(--volume-width, 50%),
+    var(--color-gray-light) 100%
+  );
+  border-radius: 2px;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--primary-accent-color);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  &:hover::-webkit-slider-thumb {
+    opacity: 1;
+  }
+}

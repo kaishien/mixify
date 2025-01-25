@@ -77,4 +77,24 @@ export class MixedPlaylistService {
       this.addingToLibraryLoader.setIsLoading(false);
     }
   }
+
+  async addToFavorites(trackId: string) {
+    try {
+      await this.api.library.saveTracks([trackId]);
+      this.notificationService.showSuccess("Added to Favorites");
+    } catch (error) {
+      this.notificationService.showError("Failed to add to Favorites");
+      throw error;
+    }
+  }
+
+  async removeFromFavorites(trackId: string) {
+    try {
+      await this.api.library.removeTracks([trackId]);
+      this.notificationService.showSuccess("Removed from Favorites");
+    } catch (error) {
+      this.notificationService.showError("Failed to remove from Favorites");
+      throw error;
+    }
+  }
 }
