@@ -3,7 +3,7 @@ import { useInjection, withContainer } from "~/config";
 import { UserServiceContainerToken } from "~/services/user";
 import { Container, Panel, VinylLoader } from "~/shared/ui/components";
 import { UserProfile } from "./ui/user-profile";
-import { WebPlayback } from "./ui/web-playback/web-playback";
+import { WebPlayback } from "./ui/web-playback";
 
 import clsx from "clsx";
 import { useEffect } from "react";

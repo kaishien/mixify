@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 
-import clsx from "clsx";
-import Heart from "~/shared/ui/assets/player-icons/heart.svg?react";
-import Next from "~/shared/ui/assets/player-icons/next-track.svg?react";
-import Pause from "~/shared/ui/assets/player-icons/pause.svg?react";
-import Play from "~/shared/ui/assets/player-icons/play.svg?react";
-import Prev from "~/shared/ui/assets/player-icons/prev-track.svg?react";
-import Volume from "~/shared/ui/assets/player-icons/volume.svg?react";
 
 import { observer } from "mobx-react-lite";
 import { useInjection } from "~/config";
 import { type AuthService, AuthServiceContainerToken } from "~/services/auth";
 import type { MixedPlaylistService } from "../../service/mixed-playlist.service";
 import { MixedPlaylistServiceContainerToken } from "../../service/mixed-playlist.service";
+import { AdditionalControls } from "./additional-controls";
+import { PlaybackControls } from "./playback-controls";
+import { ProgressBar } from "./progress-bar";
+import { TrackInfo } from "./track-info";
 import styles from "./web-playback.module.scss";
 
 const SPOTIFY_PLAYER_SCRIPT_URL = "https://sdk.scdn.co/spotify-player.js";
@@ -30,7 +27,8 @@ export const WebPlayback = observer(() => {
 	const [progress, setProgress] = useState(0);
 	const [duration, setDuration] = useState(0);
 	const [volume, setVolume] = useState(50);
-	const [isFavorite, setIsFavorite] = useState(false);
+	const [isMuted, setIsMuted] = useState(false);
+	const [previousVolume, setPreviousVolume] = useState(50);
 
 	const progressBarRef = useRef<HTMLInputElement>(null);
 	const volumeRef = useRef<HTMLInputElement>(null);
@@ -70,7 +68,6 @@ export const WebPlayback = observer(() => {
 				}
 			});
 
-			// Обновление прогресса каждую секунду
 			setInterval(() => {
 				player.getCurrentState().then((state) => {
 					if (state) {
@@ -120,26 +117,16 @@ export const WebPlayback = observer(() => {
 		playerService.playerInstance?.seek(newPosition);
 	};
 
-	const handleFavoriteToggle = async () => {
-		if (!playerService.currentTrack) return;
-		
-		try {
-			if (isFavorite) {
-				await mixedPlaylistService.removeFromFavorites(playerService.currentTrack.id);
-			} else {
-				await mixedPlaylistService.addToFavorites(playerService.currentTrack.id);
-			}
-			setIsFavorite(!isFavorite);
-		} catch (error) {
-			console.error('Failed to toggle favorite status');
+	const handleVolumeToggle = () => {
+		if (isMuted) {
+			setVolume(previousVolume);
+			playerService.playerInstance?.setVolume(previousVolume / 100);
+		} else {
+			setPreviousVolume(volume);
+			setVolume(0);
+			playerService.playerInstance?.setVolume(0);
 		}
-	};
-
-	const formatTime = (ms: number) => {
-		const seconds = Math.floor(ms / 1000);
-		const minutes = Math.floor(seconds / 60);
-		const remainingSeconds = seconds % 60;
-		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+		setIsMuted(!isMuted);
 	};
 
 	if (!playerService.playerReady.state)
@@ -150,84 +137,32 @@ export const WebPlayback = observer(() => {
 			{playerService.currentTrack && (
 				<>
 					<div className={styles.mainInfo}>
-						<div className={styles.leftSection}>
-							<img
-								className={styles.cover}
-								src={playerService.currentTrack.album.images[0]?.url}
-								alt={playerService.currentTrack.name}
-							/>
-							<div className={styles.info}>
-								<div className={styles.trackName}>{playerService.currentTrack.name}</div>
-								<div className={styles.artistName}>{playerService.currentTrack.artists[0].name}</div>
-							</div>
-						</div>
-
-						<div className={styles.controls}>
-							<button
-								type="button"
-								className={styles.controlButton}
-								onClick={playerService.handlePrevTrack}
-								aria-label="Previous track"
-							>
-								<Prev />
-							</button>
-							<button
-								type="button"
-								className={styles.playPauseButton}
-								onClick={playerService.handlePlayPause}
-								aria-label="Play or pause"
-							>
-								{playerService.isPaused ? <Play /> : <Pause />}
-							</button>
-							<button
-								type="button"
-								className={styles.controlButton}
-								onClick={playerService.handleNextTrack}
-								aria-label="Next track"
-							>
-								<Next />
-							</button>
-						</div>
-
-						<div className={styles.rightSection}>
-							<button
-								type="button"
-								className={clsx(styles.favoriteButton, { [styles.active]: isFavorite })}
-								onClick={handleFavoriteToggle}
-								aria-label="Add to favorites"
-							>
-								<Heart />
-							</button>
-							<div className={styles.volumeContainer}>
-								<Volume />
-								<input
-									ref={volumeRef}
-									type="range"
-									min="0"
-									max="100"
-									value={volume}
-									className={styles.volume}
-									onChange={handleVolumeChange}
-								/>
-							</div>
-						</div>
-					</div>
-
-					<div className={styles.progressContainer}>
-						<input
-							ref={progressBarRef}
-							type="range"
-							min="0"
-							max={duration}
-							value={progress}
-							className={styles.progress}
-							onChange={handleProgressChange}
+					 <TrackInfo track={playerService.currentTrack} />
+						
+						<PlaybackControls
+							isPaused={playerService.isPaused}
+							onPrevTrack={playerService.handlePrevTrack}
+							onPlayPause={playerService.handlePlayPause}
+							onNextTrack={playerService.handleNextTrack}
 						/>
-						<div className={styles.timeContainer}>
-							<span className={styles.time}>{formatTime(progress)}</span>
-							<span className={styles.time}>{formatTime(duration)}</span>
-						</div>
+
+						<AdditionalControls
+							volume={volume}
+							isMuted={isMuted}
+							isFavorite={true}
+							onVolumeChange={handleVolumeChange}
+							onVolumeToggle={handleVolumeToggle}
+							onFavoriteToggle={() => null}
+							volumeRef={volumeRef}
+						/>
 					</div>
+
+					<ProgressBar
+						progress={progress}
+						duration={duration}
+						onProgressChange={handleProgressChange}
+						progressBarRef={progressBarRef}
+					/>
 				</>
 			)}
 		</div>
