@@ -1,5 +1,6 @@
-import styles from "./web-playback.module.scss";
+import { memo } from "react";
 import { formatTime } from "./lib/format-time";
+import styles from "./web-playback.module.scss";
 
 interface ProgressBarProps {
   progress: number;
@@ -8,7 +9,7 @@ interface ProgressBarProps {
   progressBarRef: React.RefObject<HTMLInputElement>;
 }
 
-export const ProgressBar = ({
+export const ProgressBar = memo(({
   progress,
   duration,
   onProgressChange,
@@ -29,4 +30,4 @@ export const ProgressBar = ({
       <span className={styles.time}>{formatTime(duration)}</span>
     </div>
   </div>
-); 
+));

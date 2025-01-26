@@ -10,21 +10,51 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
+  flex-direction: column;
+
+  @include respond-to-tablet {
+    flex-direction: row;
+  }
+}
+
+.desktopViewControls {
+  display: none;
+
+  @include respond-to-tablet {
+    display: flex;
+    justify-content: flex-end;
+    width: 30%;
+  }
+}
+
+.mobileViewControls {
+  display: flex;
+
+  @include respond-to-tablet {
+    display: none;
+  }
 }
 
 .leftSection {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
   min-width: 0;
-  width: 30%;
+
+  @include respond-to-tablet {
+    width: 30%;
+  }
 }
 
 .rightSection {
+  @include respond-to-tablet {
+    width: 30%;
+  }
+
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  width: 30%;
   justify-content: flex-end;
 }
 
@@ -213,15 +243,22 @@
   height: 4px;
   -webkit-appearance: none;
   appearance: none;
-  background: linear-gradient(
-    to right,
-    var(--primary-accent-color) 0%,
-    var(--primary-accent-color) var(--volume-width, 50%),
-    var(--color-gray-light) var(--volume-width, 50%),
-    var(--color-gray-light) 100%
-  );
+  background: transparent;
   border-radius: 2px;
   cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(
+      to right,
+      var(--primary-accent-color) 0%,
+      var(--primary-accent-color) calc(var(--value, 0) * 1%),
+      var(--color-gray-light) calc(var(--value, 0) * 1%),
+      var(--color-gray-light) 100%
+    );
+  }
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -232,9 +269,37 @@
     border-radius: 50%;
     opacity: 0;
     transition: opacity 0.2s;
+    margin-top: -4px;
   }
 
   &:hover::-webkit-slider-thumb {
+    opacity: 1;
+  }
+
+  &::-moz-range-track {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(
+      to right,
+      var(--primary-accent-color) 0%,
+      var(--primary-accent-color) calc(var(--value, 0) * 1%),
+      var(--color-gray-light) calc(var(--value, 0) * 1%),
+      var(--color-gray-light) 100%
+    );
+  }
+
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--primary-accent-color);
+    border: none;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  &:hover::-moz-range-thumb {
     opacity: 1;
   }
 }

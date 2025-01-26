@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-
-
 import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useRef } from "react";
+
 import { useInjection } from "~/config";
 import { type AuthService, AuthServiceContainerToken } from "~/services/auth";
 import type { MixedPlaylistService } from "../../service/mixed-playlist.service";
@@ -13,6 +12,7 @@ import { TrackInfo } from "./track-info";
 import styles from "./web-playback.module.scss";
 
 const SPOTIFY_PLAYER_SCRIPT_URL = "https://sdk.scdn.co/spotify-player.js";
+const PLAYER_NAME = "Mixify Web Player";
 
 export const WebPlayback = observer(() => {
 	const authService = useInjection<AuthService>(AuthServiceContainerToken.AuthService);
@@ -21,17 +21,25 @@ export const WebPlayback = observer(() => {
 	);
 
 	const playerService = mixedPlaylistService.playerService;
-
 	const token = authService.getToken();
 
-	const [progress, setProgress] = useState(0);
-	const [duration, setDuration] = useState(0);
-	const [volume, setVolume] = useState(50);
-	const [isMuted, setIsMuted] = useState(false);
-	const [previousVolume, setPreviousVolume] = useState(50);
-
 	const progressBarRef = useRef<HTMLInputElement>(null);
-	const volumeRef = useRef<HTMLInputElement>(null);
+
+	const handleVolumeChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const value = Number(e.target.value);
+			playerService.handleVolumeChange(value);
+		},
+		[playerService],
+	);
+
+	const handleProgressChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const value = Number(e.target.value);
+			playerService.handleProgressChange(value);
+		},
+		[playerService],
+	);
 
 	useEffect(() => {
 		const script = document.createElement("script");
@@ -42,11 +50,11 @@ export const WebPlayback = observer(() => {
 
 		window.onSpotifyWebPlaybackSDKReady = () => {
 			const player = new window.Spotify.Player({
-				name: "Mixify Web Player",
+				name: PLAYER_NAME,
 				getOAuthToken: (cb) => {
 					cb(token);
 				},
-				volume: volume / 100,
+				volume: playerService.volume / 100,
 			});
 
 			playerService.setPlayerInstance(player);
@@ -54,80 +62,32 @@ export const WebPlayback = observer(() => {
 			player.addListener("ready", ({ device_id }) => {
 				mixedPlaylistService.updateDeviceId(device_id);
 				playerService.playerReady.set(true);
-				if (volumeRef.current) {
-					volumeRef.current.style.setProperty('--volume-width', `${volume}%`);
-				}
 			});
 
 			player.addListener("player_state_changed", (state) => {
 				if (state) {
 					playerService.setCurrentTrack(state.track_window.current_track);
 					playerService.setIsPaused(state.paused);
-					setProgress(state.position);
-					setDuration(state.duration);
+					playerService.setProgress(state.position);
+					playerService.setDuration(state.duration);
 				}
 			});
-
-			setInterval(() => {
-				player.getCurrentState().then((state) => {
-					if (state) {
-						setProgress(state.position);
-					}
-				});
-			}, 1000);
 
 			player.connect();
 		};
 
 		return () => {
-			playerService.playerInstance?.disconnect();
+			playerService.cleanup();
 			script.remove();
 		};
 	}, [token]);
 
 	useEffect(() => {
 		if (progressBarRef.current) {
-			const progressPercent = (progress / duration) * 100;
-			progressBarRef.current.style.setProperty('--progress-width', `${progressPercent}%`);
+			const progressPercent = (playerService.progress / playerService.duration) * 100;
+			progressBarRef.current.style.setProperty("--progress-width", `${progressPercent}%`);
 		}
-	}, [progress, duration]);
-
-	useEffect(() => {
-		if (volumeRef.current) {
-			volumeRef.current.style.setProperty('--volume-width', `${volume}%`);
-		}
-	}, [volume]);
-
-	const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const newVolume = Number(e.target.value);
-		setVolume(newVolume);
-		if (volumeRef.current) {
-			volumeRef.current.style.setProperty('--volume-width', `${newVolume}%`);
-		}
-		playerService.playerInstance?.setVolume(newVolume / 100);
-	};
-
-	const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const newPosition = Number(e.target.value);
-		setProgress(newPosition);
-		if (progressBarRef.current) {
-			const progressPercent = (newPosition / duration) * 100;
-			progressBarRef.current.style.setProperty('--progress-width', `${progressPercent}%`);
-		}
-		playerService.playerInstance?.seek(newPosition);
-	};
-
-	const handleVolumeToggle = () => {
-		if (isMuted) {
-			setVolume(previousVolume);
-			playerService.playerInstance?.setVolume(previousVolume / 100);
-		} else {
-			setPreviousVolume(volume);
-			setVolume(0);
-			playerService.playerInstance?.setVolume(0);
-		}
-		setIsMuted(!isMuted);
-	};
+	}, [playerService.progress, playerService.duration]);
 
 	if (!playerService.playerReady.state)
 		return <div className={styles.connecting}>Connecting to Spotify...</div>;
@@ -137,8 +97,8 @@ export const WebPlayback = observer(() => {
 			{playerService.currentTrack && (
 				<>
 					<div className={styles.mainInfo}>
-					 <TrackInfo track={playerService.currentTrack} />
-						
+						<TrackInfo track={playerService.currentTrack} />
+
 						<PlaybackControls
 							isPaused={playerService.isPaused}
 							onPrevTrack={playerService.handlePrevTrack}
@@ -146,23 +106,35 @@ export const WebPlayback = observer(() => {
 							onNextTrack={playerService.handleNextTrack}
 						/>
 
-						<AdditionalControls
-							volume={volume}
-							isMuted={isMuted}
-							isFavorite={true}
-							onVolumeChange={handleVolumeChange}
-							onVolumeToggle={handleVolumeToggle}
-							onFavoriteToggle={() => null}
-							volumeRef={volumeRef}
-						/>
+						<div className={styles.desktopViewControls}>
+							<AdditionalControls
+								volume={playerService.volume}
+								isMuted={playerService.isMuted}
+								isFavorite={false}
+								onVolumeChange={handleVolumeChange}
+								onVolumeToggle={playerService.handleVolumeToggle}
+								onFavoriteToggle={() => null}
+							/>
+						</div>
 					</div>
 
 					<ProgressBar
-						progress={progress}
-						duration={duration}
+						progress={playerService.progress}
+						duration={playerService.duration}
 						onProgressChange={handleProgressChange}
 						progressBarRef={progressBarRef}
 					/>
+
+					<div className={styles.mobileViewControls}>
+						<AdditionalControls
+							volume={playerService.volume}
+							isMuted={playerService.isMuted}
+							isFavorite={true}
+							onVolumeChange={handleVolumeChange}
+							onVolumeToggle={playerService.handleVolumeToggle}
+							onFavoriteToggle={() => null}
+						/>
+					</div>
 				</>
 			)}
 		</div>

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Next from "~/shared/ui/assets/player-icons/next-track.svg?react";
 import Pause from "~/shared/ui/assets/player-icons/pause.svg?react";
 import Play from "~/shared/ui/assets/player-icons/play.svg?react";
@@ -11,7 +12,7 @@ interface PlaybackControlsProps {
   onNextTrack: () => void;
 }
 
-export const PlaybackControls = ({
+export const PlaybackControls = memo(({
   isPaused,
   onPrevTrack,
   onPlayPause,
@@ -43,4 +44,4 @@ export const PlaybackControls = ({
       <Next />
     </button>
   </div>
-); 
+));

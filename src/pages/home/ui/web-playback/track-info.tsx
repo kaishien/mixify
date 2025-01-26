@@ -1,10 +1,11 @@
+import { memo } from "react";
 import styles from "./web-playback.module.scss";
 
 interface TrackInfoProps {
   track: Spotify.Track;
 }
 
-export const TrackInfo = ({ track }: TrackInfoProps) => (
+export const TrackInfo = memo(({ track }: TrackInfoProps) => (
   <div className={styles.leftSection}>
     <img
       className={styles.cover}
@@ -16,4 +17,4 @@ export const TrackInfo = ({ track }: TrackInfoProps) => (
       <div className={styles.artistName}>{track.artists[0].name}</div>
     </div>
   </div>
-); 
+));
