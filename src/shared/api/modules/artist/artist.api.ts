@@ -1,12 +1,12 @@
 import { inject, injectable } from "inversify";
 import type { Artist } from "spotify-types";
 import type { HttpClient } from "~/config";
-import { HttpClientToken } from "~/config";
+import { $HttpClient } from "~/config";
 
 @injectable()
 export class ArtistApi {
 	constructor(
-		@inject(HttpClientToken.SpotifyBase) private httpClient: HttpClient,
+		@inject($HttpClient.SpotifyBase) private httpClient: HttpClient,
 	) { }
 
 	async getArtist(id: string): Promise<Artist> {

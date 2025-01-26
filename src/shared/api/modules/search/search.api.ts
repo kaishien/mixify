@@ -7,7 +7,7 @@ import type {
   SimplifiedShow,
   Track,
 } from "spotify-types";
-import { type HttpClient, HttpClientToken } from "~/config";
+import { $HttpClient, type HttpClient } from "~/config";
 
 type SearchType = 'album' | 'artist' | 'playlist' | 'track' | 'show' | 'episode' | 'audiobook';
 
@@ -41,7 +41,7 @@ interface SearchOptions {
 @injectable()
 export class SearchApi {
   constructor(
-    @inject(HttpClientToken.SpotifyBase) private spotifyHttp: HttpClient,
+    @inject($HttpClient.SpotifyBase) private spotifyHttp: HttpClient,
   ) { }
 
   async search(query: string, options: SearchOptions): Promise<SearchResults> {

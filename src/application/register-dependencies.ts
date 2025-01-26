@@ -1,15 +1,14 @@
 import { Container } from "inversify";
-import { HttpClient, HttpClientToken, config } from "~/config";
+import { $HttpClient, HttpClient, config } from "~/config";
 import { RouterService } from "~/config/router/router-service";
-import { MixGenresService, $MixGenresService } from "~/pages/home/service/mix-genres.service";
-import { MixedPlaylistService, $MixedPlaylistService } from "~/pages/home/service/mixed-playlist.service";
-import { AuthService, $AuthService, } from "~/services/auth";
-import { type INotificationService, NotificationService, $NotificationService } from "~/services/notification";
-import { UserService, $UserService } from "~/services/user";
+import { $MixGenresService, MixGenresService } from "~/pages/home/service/mix-genres.service";
+import { $MixedPlaylistService, MixedPlaylistService } from "~/pages/home/service/mixed-playlist.service";
+import { $WebPlayerService, WebPlayerService } from "~/pages/home/service/web-player.service";
+import { $AuthService, AuthService, } from "~/services/auth";
+import { $NotificationService, type INotificationService, NotificationService } from "~/services/notification";
+import { $UserService, UserService } from "~/services/user";
 import { Api, ApiFacade, ArtistApi, AuthApi, PlayerApi, PlaylistsApi, RecommendationsApi, SearchApi, TracksApi, UserApi } from "~/shared/api";
 import { ApplicationService } from "./application.service";
-import { WebPlayerService } from "~/pages/home/service/web-player.service";
-import { $WebPlayerService } from "~/pages/home/service/web-player.service";
 
 const container = new Container();
 
@@ -17,16 +16,16 @@ container.bind(ApplicationService).to(ApplicationService).inSingletonScope();
 container.bind(RouterService).to(RouterService).inSingletonScope();
 
 container
-	.bind<HttpClient>(HttpClientToken.SpotifyBase)
+	.bind<HttpClient>($HttpClient.SpotifyBase)
 	.toDynamicValue(() => new HttpClient(config.spotifyBaseApiUrl))
 	.inSingletonScope();
 
 container
-	.bind<HttpClient>(HttpClientToken.SpotifyAccount)
+	.bind<HttpClient>($HttpClient.SpotifyAccount)
 	.toDynamicValue(() => new HttpClient(config.spotifyAccountApiUrl))
 	.inSingletonScope();
 
-container.bind<HttpClient>(HttpClientToken.LastFmBase)
+container.bind<HttpClient>($HttpClient.LastFmBase)
 	.toDynamicValue(() => new HttpClient(config.lastFmBaseApiUrl))
 	.inSingletonScope();
 

@@ -1,11 +1,11 @@
 import { inject, injectable } from "inversify";
 import type { HttpClient } from "~/config";
-import { HttpClientToken, config } from "~/config";
+import { $HttpClient, config } from "~/config";
 import type { LastFMArtistGetSimilarResponse, LastFMArtistGetTopTracksResponse, LastFMGeoGetTopTracksResponse, LastFMTrackGetSimilarResponse } from "../../types/lastfm.types";
 
 @injectable()
 export class RecommendationsApi {
-	constructor(@inject(HttpClientToken.LastFmBase) private lastFmClient: HttpClient) { }
+	constructor(@inject($HttpClient.LastFmBase) private lastFmClient: HttpClient) { }
 
 	async getSimilarTracks(artist: string, track: string) {
 		const response = await this.lastFmClient.get<LastFMTrackGetSimilarResponse>('/', {

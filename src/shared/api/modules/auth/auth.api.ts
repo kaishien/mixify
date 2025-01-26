@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { type HttpClient, HttpClientToken, config } from "~/config";
+import { $HttpClient, type HttpClient, config } from "~/config";
 import { generateRandomString } from "../../../lib/generate-random-string";
 import type { AuthorizationResponse, AuthorizeQueryParams } from "./types";
 
@@ -14,8 +14,8 @@ const scopes = {
 @injectable()
 export class AuthApi {
 	constructor(
-		@inject(HttpClientToken.SpotifyAccount) private httpClient: HttpClient,
-		@inject(HttpClientToken.SpotifyBase) private baseClient: HttpClient,
+		@inject($HttpClient.SpotifyAccount) private httpClient: HttpClient,
+		@inject($HttpClient.SpotifyBase) private baseClient: HttpClient,
 	) { }
 
 	async authorize(): Promise<void> {

@@ -1,6 +1,6 @@
 import type { HttpClient } from "~/config";
 
-import { HttpClientToken } from "~/config";
+import { $HttpClient } from "~/config";
 
 import { inject, injectable } from "inversify";
 import type { Track } from "spotify-types";
@@ -14,7 +14,7 @@ interface SpotifyTracksResponse {
 
 @injectable()
 export class TracksApi {
-	constructor(@inject(HttpClientToken.SpotifyBase) private baseClient: HttpClient) { }
+	constructor(@inject($HttpClient.SpotifyBase) private baseClient: HttpClient) { }
 
 	async getSavedTracks(limit = 50, offset = 0) {
 		const response = await this.baseClient.get<SpotifyTracksResponse>(
