@@ -32,7 +32,10 @@ export class HttpClient {
 		this.accessToken = accessToken;
 	}
 
-	private createUrl(path: string, params?: Record<string, string | number | boolean | string[]>): string {
+	private createUrl(
+		path: string,
+		params?: Record<string, string | number | boolean | string[]>,
+	): string {
 		const url = new URL(`${this.baseURL}${path}`);
 
 		if (params) {
@@ -56,15 +59,15 @@ export class HttpClient {
 
 		const response = await fetch(fullUrl, {
 			headers: {
-				'Authorization': `Bearer ${this.accessToken}`,
-				...headers
+				Authorization: `Bearer ${this.accessToken}`,
+				...headers,
 			},
 			...restOptions,
 		});
 
 		if (response.status === 401) {
 			eventEmitter.emit(Events.TOKEN_EXPIRED);
-			throw new Error('Token expired');
+			throw new Error("Token expired");
 		}
 
 		if (response.status === 403) {
@@ -80,7 +83,7 @@ export class HttpClient {
 			method: "POST",
 			body: data instanceof URLSearchParams ? data : JSON.stringify(data),
 			headers: {
-				'Authorization': `Bearer ${this.accessToken}`,
+				Authorization: `Bearer ${this.accessToken}`,
 				...options?.headers,
 			},
 			...options,
@@ -97,13 +100,12 @@ export class HttpClient {
 		const response = await fetch(`${this.baseURL}${url}`, {
 			method: "PUT",
 			headers: {
-				'Authorization': `Bearer ${this.accessToken}`,
+				Authorization: `Bearer ${this.accessToken}`,
 				...options?.headers,
 			},
 			body: JSON.stringify(body),
 			...options,
 		});
-
 
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
@@ -111,7 +113,7 @@ export class HttpClient {
 
 		if (response.status === 401) {
 			eventEmitter.emit(Events.TOKEN_EXPIRED);
-			throw new Error('Token expired');
+			throw new Error("Token expired");
 		}
 
 		if (response.status === 403) {
@@ -119,13 +121,16 @@ export class HttpClient {
 			throw new Error("Auth error");
 		}
 
-		return response.json();
+		const contentLength = response.headers.get("content-length");
+		const hasContent = contentLength && Number.parseInt(contentLength) > 0;
+
+		return hasContent ? response.json() : (null as T);
 	}
 
 	async delete<T, U>(url: string, body?: U, options?: RequestInit): Promise<T> {
 		const response = await fetch(`${this.baseURL}${url}`, {
 			headers: {
-				'Authorization': `Bearer ${this.accessToken}`,
+				Authorization: `Bearer ${this.accessToken}`,
 				...options?.headers,
 			},
 			body: JSON.stringify(body),
@@ -133,6 +138,23 @@ export class HttpClient {
 			...options,
 		});
 
-		return response.json();
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		if (response.status === 401) {
+			eventEmitter.emit(Events.TOKEN_EXPIRED);
+			throw new Error("Token expired");
+		}
+
+		if (response.status === 403) {
+			eventEmitter.emit(Events.AUTH_ERROR);
+			throw new Error("Auth error");
+		}
+
+		const contentLength = response.headers.get("content-length");
+		const hasContent = contentLength && Number.parseInt(contentLength) > 0;
+
+		return hasContent ? response.json() : (null as T);
 	}
 }
