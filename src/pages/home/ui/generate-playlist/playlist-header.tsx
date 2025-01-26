@@ -4,17 +4,14 @@ import PlayIcon from "~/shared/ui/assets/player-icons/play.svg?react";
 import PlaylistAddIcon from "~/shared/ui/assets/player-icons/playlist-add.svg?react";
 import { Button, Typography } from "~/shared/ui/components";
 import type { MixGenresService } from "../../service/mix-genres.service";
-import { MixGenresServiceContainerToken } from "../../service/mix-genres.service";
+import { $MixGenresService } from "../../service/mix-genres.service";
 import type { MixedPlaylistService } from "../../service/mixed-playlist.service";
-import { MixedPlaylistServiceContainerToken } from "../../service/mixed-playlist.service";
+import { $MixedPlaylistService } from "../../service/mixed-playlist.service";
 import styles from "./generate-playlist.module.scss";
 
 const PlaylistControls = observer(() => {
-	const mixedPlaylistService = useInjection<MixedPlaylistService>(
-		MixedPlaylistServiceContainerToken,
-	);
-
-	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken);
+	const mixedPlaylistService = useInjection<MixedPlaylistService>($MixedPlaylistService);
+	const mixGenresService = useInjection<MixGenresService>($MixGenresService);
 
 	return (
 		<div className={styles.generatedPlaylist__controls}>
@@ -51,9 +48,7 @@ const PlaylistControls = observer(() => {
 });
 
 export const PlaylistHeader = observer(() => {
-	const mixedPlaylistService = useInjection<MixedPlaylistService>(
-		MixedPlaylistServiceContainerToken,
-	);
+	const mixedPlaylistService = useInjection<MixedPlaylistService>($MixedPlaylistService);
 
 	return (
 		<>

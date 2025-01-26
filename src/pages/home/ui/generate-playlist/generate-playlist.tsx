@@ -3,10 +3,10 @@ import { useInjection } from "~/config/ioc/use-injection";
 import { Button } from "~/shared/ui/components";
 import {
 	type MixGenresService,
-	MixGenresServiceContainerToken,
+	$MixGenresService,
 } from "../../service/mix-genres.service";
 import type { MixedPlaylistService } from "../../service/mixed-playlist.service";
-import { MixedPlaylistServiceContainerToken } from "../../service/mixed-playlist.service";
+import { $MixedPlaylistService } from "../../service/mixed-playlist.service";
 import { Playlist } from "./playlist";
 import { PlaylistHeader } from "./playlist-header";
 
@@ -14,9 +14,7 @@ import styles from "./generate-playlist.module.scss";
 import { ScreenLoader } from "./screen-loader";
 
 const GeneratedPlaylist = observer(() => {
-	const mixedPlaylistService = useInjection<MixedPlaylistService>(
-		MixedPlaylistServiceContainerToken,
-	);
+	const mixedPlaylistService = useInjection<MixedPlaylistService>($MixedPlaylistService);
 
 	const mixedPlaylist = mixedPlaylistService.mixedPlaylist;
 
@@ -31,11 +29,9 @@ const GeneratedPlaylist = observer(() => {
 });
 
 export const GeneratePlaylist = observer(() => {
-	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken);
+	const mixGenresService = useInjection<MixGenresService>($MixGenresService);
 
-	const mixedPlaylistService = useInjection<MixedPlaylistService>(
-		MixedPlaylistServiceContainerToken,
-	);
+	const mixedPlaylistService = useInjection<MixedPlaylistService>($MixedPlaylistService);
 
 	const hasMixedTracks = mixedPlaylistService.mixedPlaylist.length > 0;
 

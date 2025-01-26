@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
 import { makeAutoObservable, reaction } from "mobx";
-import { type INotificationService, NotificationServiceToken } from "~/services/notification";
+import { type INotificationService, $NotificationService } from "~/services/notification";
 import { Api } from "~/shared/api";
 import { StateToggler } from "~/shared/lib/state-toggler";
 
-export const WebPlayerServiceContainerToken = Symbol.for("WebPlayerService");
+export const $WebPlayerService = Symbol.for("WebPlayerService");
 
 @injectable()
 export class WebPlayerService {
@@ -27,7 +27,7 @@ export class WebPlayerService {
 
   constructor(
     @inject(Api) private readonly api: Api,
-    @inject(NotificationServiceToken) private readonly notificationService: INotificationService,
+    @inject($NotificationService) private readonly notificationService: INotificationService,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
     reaction(() => this.currentActiveTrackId, (trackId) => {

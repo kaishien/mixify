@@ -1,3 +1,3 @@
-export { NotificationService, NotificationServiceToken } from "./notification.service.ts";
+export { NotificationService, $NotificationService } from "./notification.service.ts";
 export type { INotificationService } from "./notification.service.ts";
 

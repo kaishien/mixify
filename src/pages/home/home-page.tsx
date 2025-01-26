@@ -1,27 +1,27 @@
 import { observer } from "mobx-react-lite";
 import { useInjection, withContainer } from "~/config";
-import { UserServiceContainerToken } from "~/services/user";
+import { $UserService } from "~/services/user";
 import { Container, Panel, VinylLoader } from "~/shared/ui/components";
 import { UserProfile } from "./ui/user-profile";
 import { WebPlayback } from "./ui/web-playback";
 
 import clsx from "clsx";
 import { useEffect } from "react";
-import { AuthServiceContainerToken } from "~/services/auth";
+import { $AuthService } from "~/services/auth";
 import styles from "./home-page.module.scss";
 import {
 	type MixGenresService,
-	MixGenresServiceContainerToken,
+	$MixGenresService,
 } from "./service/mix-genres.service";
 import type { MixedPlaylistService } from "./service/mixed-playlist.service";
-import { MixedPlaylistServiceContainerToken } from "./service/mixed-playlist.service";
-import { type WebPlayerService, WebPlayerServiceContainerToken } from "./service/web-player.service";
+import { $MixedPlaylistService } from "./service/mixed-playlist.service";
+import { type WebPlayerService, $WebPlayerService } from "./service/web-player.service";
 import { GeneratePlaylist } from "./ui/generate-playlist/generate-playlist";
 import { UserFavoriteArtists } from "./ui/user-favorite-artists/user-favorite-artists";
 import { UserGenres } from "./ui/user-genres/user-genres";
 
 const PageLoader = observer(() => {
-	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken);
+	const mixGenresService = useInjection<MixGenresService>($MixGenresService);
 	const text = mixGenresService.initialLoadingData.loadingStatus;
 
 	return (
@@ -46,9 +46,9 @@ const PageLoader = observer(() => {
 });
 
 const Home = observer(() => {
-	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken);
-	const mixPlaylistService = useInjection<MixedPlaylistService>(MixedPlaylistServiceContainerToken);
-	const playerService = useInjection<WebPlayerService>(WebPlayerServiceContainerToken);
+	const mixGenresService = useInjection<MixGenresService>($MixGenresService);
+	const mixPlaylistService = useInjection<MixedPlaylistService>($MixedPlaylistService);
+	const playerService = useInjection<WebPlayerService>($WebPlayerService);
 
 	useEffect(() => {
 		document.body.style.backgroundColor = "var(--background-color-dark)";
@@ -105,9 +105,9 @@ const Home = observer(() => {
 });
 
 export const HomePage = withContainer(Home, [
-	UserServiceContainerToken.UserService,
-	AuthServiceContainerToken.AuthService,
-	MixGenresServiceContainerToken,
-	MixedPlaylistServiceContainerToken,
-	WebPlayerServiceContainerToken,
+	$UserService,
+	$AuthService,
+	$MixGenresService,
+	$MixedPlaylistService,
+	$WebPlayerService,
 ]);

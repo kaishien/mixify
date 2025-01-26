@@ -12,9 +12,7 @@ import {
 	LocalStorageCacheStrategy,
 } from "~/shared/factories/async-operation";
 
-export const AuthServiceContainerToken = {
-	AuthService: Symbol.for("AuthService"),
-};
+export const $AuthService = Symbol.for("AuthService");
 
 @injectable()
 export class AuthService implements IService {

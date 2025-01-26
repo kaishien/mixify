@@ -2,17 +2,17 @@ import { inject, injectable } from "inversify";
 import { RouterService } from "~/config";
 import type { IService } from "~/config/service.interface";
 import type { AuthService } from "~/services/auth";
-import { AuthServiceContainerToken } from "~/services/auth";
+import { $AuthService } from "~/services/auth";
 import type { UserService } from "~/services/user";
-import { UserServiceContainerToken } from "~/services/user";
+import { $UserService } from "~/services/user";
 import { Events, eventEmitter } from "~/shared/event-emmiter";
 
 @injectable()
 export class ApplicationService implements IService {
 	constructor(
-		@inject(UserServiceContainerToken.UserService) private readonly userService: UserService,
+		@inject($UserService) private readonly userService: UserService,
 		@inject(RouterService) private readonly routerService: RouterService,
-		@inject(AuthServiceContainerToken.AuthService) private readonly authService: AuthService,
+		@inject($AuthService) private readonly authService: AuthService,
 	) {
 		eventEmitter.on(Events.AUTH_SUCCESS, () => {
 			this.initialize();

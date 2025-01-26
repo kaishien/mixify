@@ -2,9 +2,9 @@ import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useRef } from "react";
 
 import { useInjection } from "~/config";
-import { type AuthService, AuthServiceContainerToken } from "~/services/auth";
+import { type AuthService, $AuthService } from "~/services/auth";
 import type { WebPlayerService } from "../../service/web-player.service";
-import { WebPlayerServiceContainerToken } from "../../service/web-player.service";
+import { $WebPlayerService } from "../../service/web-player.service";
 import { AdditionalControls } from "./additional-controls";
 import { PlaybackControls } from "./playback-controls";
 import { ProgressBar } from "./progress-bar";
@@ -15,8 +15,8 @@ const SPOTIFY_PLAYER_SCRIPT_URL = "https://sdk.scdn.co/spotify-player.js";
 const PLAYER_NAME = "Mixify Web Player";
 
 export const WebPlayback = observer(() => {
-	const authService = useInjection<AuthService>(AuthServiceContainerToken.AuthService);
-	const playerService = useInjection<WebPlayerService>(WebPlayerServiceContainerToken);
+	const authService = useInjection<AuthService>($AuthService);
+	const playerService = useInjection<WebPlayerService>($WebPlayerService);
 
 	const token = authService.getToken();
 

@@ -1,15 +1,15 @@
 import { Container } from "inversify";
 import { HttpClient, HttpClientToken, config } from "~/config";
 import { RouterService } from "~/config/router/router-service";
-import { MixGenresService, MixGenresServiceContainerToken } from "~/pages/home/service/mix-genres.service";
-import { MixedPlaylistService, MixedPlaylistServiceContainerToken } from "~/pages/home/service/mixed-playlist.service";
-import { AuthService, AuthServiceContainerToken } from "~/services/auth";
-import { type INotificationService, NotificationService, NotificationServiceToken } from "~/services/notification";
-import { UserService, UserServiceContainerToken } from "~/services/user";
+import { MixGenresService, $MixGenresService } from "~/pages/home/service/mix-genres.service";
+import { MixedPlaylistService, $MixedPlaylistService } from "~/pages/home/service/mixed-playlist.service";
+import { AuthService, $AuthService, } from "~/services/auth";
+import { type INotificationService, NotificationService, $NotificationService } from "~/services/notification";
+import { UserService, $UserService } from "~/services/user";
 import { Api, ApiFacade, ArtistApi, AuthApi, PlayerApi, PlaylistsApi, RecommendationsApi, SearchApi, TracksApi, UserApi } from "~/shared/api";
 import { ApplicationService } from "./application.service";
 import { WebPlayerService } from "~/pages/home/service/web-player.service";
-import { WebPlayerServiceContainerToken } from "~/pages/home/service/web-player.service";
+import { $WebPlayerService } from "~/pages/home/service/web-player.service";
 
 const container = new Container();
 
@@ -30,24 +30,24 @@ container.bind<HttpClient>(HttpClientToken.LastFmBase)
 	.toDynamicValue(() => new HttpClient(config.lastFmBaseApiUrl))
 	.inSingletonScope();
 
-container.bind<INotificationService>(NotificationServiceToken).to(NotificationService).inSingletonScope();
+container.bind<INotificationService>($NotificationService).to(NotificationService).inSingletonScope();
 
 const registryServices = () => {
-	container.bind(AuthServiceContainerToken.AuthService).to(AuthService).inSingletonScope();
-	container.bind(UserServiceContainerToken.UserService).to(UserService).inSingletonScope();
-	container.bind(MixGenresServiceContainerToken).to(MixGenresService).inSingletonScope();
+	container.bind($AuthService).to(AuthService).inSingletonScope();
+	container.bind($UserService).to(UserService).inSingletonScope();
+	container.bind($MixGenresService).to(MixGenresService).inSingletonScope();
 	container
-		.bind<MixedPlaylistService>(MixedPlaylistServiceContainerToken)
+		.bind<MixedPlaylistService>($MixedPlaylistService)
 		.toDynamicValue(() => {
 			return new MixedPlaylistService(
 				container.get(Api),
-				container.get(UserServiceContainerToken.UserService),
-				container.get(NotificationServiceToken),
-				container.get(WebPlayerServiceContainerToken),
+				container.get($UserService),
+				container.get($NotificationService),
+				container.get($WebPlayerService),
 			);
 		})
 		.inSingletonScope();
-	container.bind(WebPlayerServiceContainerToken).to(WebPlayerService).inSingletonScope();
+	container.bind($WebPlayerService).to(WebPlayerService).inSingletonScope();
 };
 
 const registyApi = () => {

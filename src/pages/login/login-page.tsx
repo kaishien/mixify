@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useInjection } from "~/config";
 import { withContainer } from "~/config/ioc/with-container";
-import { type AuthService, AuthServiceContainerToken } from "~/services/auth";
+import { $AuthService, type AuthService } from "~/services/auth";
 import { Button } from "~/shared/ui/components";
 
 import styles from "./login-page.module.scss";
@@ -23,7 +23,7 @@ const SiteName = () => {
 };
 
 const LoginPageContent = observer(() => {
-	const authService = useInjection<AuthService>(AuthServiceContainerToken.AuthService);
+	const authService = useInjection<AuthService>($AuthService);
 
 	return (
 		<main className={styles.loginPage}>
@@ -36,7 +36,8 @@ const LoginPageContent = observer(() => {
 		</main>
 	);
 });
+
 export const LoginPage = withContainer(LoginPageContent, [
-	AuthServiceContainerToken.AuthService,
+	$AuthService,
 ]);
 

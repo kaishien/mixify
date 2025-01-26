@@ -5,9 +5,7 @@ import type { IService } from "~/config/service.interface";
 import { Api } from "~/shared/api";
 import { AsyncOperation } from "~/shared/factories/async-operation";
 
-export const UserServiceContainerToken = {
-	UserService: Symbol.for("UserService"),
-};
+export const $UserService = Symbol.for("UserService");
 
 @injectable()
 export class UserService implements IService {

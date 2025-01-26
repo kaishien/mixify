@@ -1,19 +1,17 @@
 import { observer } from "mobx-react-lite";
-import { container } from "~/application/register-dependencies";
 import { Badge, Typography, useScrollOverlay } from "~/shared/ui/components";
 import {
 	type MixGenresService,
-	MixGenresServiceContainerToken,
+	$MixGenresService,
 } from "../../service/mix-genres.service";
 
 import styles from "./user-genres.module.css";
+import { useInjection } from "~/config";
 
 export const UserGenres = observer(() => {
 	const { showTopOverlay, showBottomOverlay, listRef, handleScroll } = useScrollOverlay();
 
-	const mixGenresService = container.get<MixGenresService>(
-		MixGenresServiceContainerToken
-	);
+	const mixGenresService = useInjection<MixGenresService>($MixGenresService);
 
 	return (
 		<div className={styles.userFavoriteGenres}>

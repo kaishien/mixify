@@ -1,17 +1,15 @@
 import { observer } from "mobx-react-lite";
-import { container } from "~/application/register-dependencies";
 import { Avatar, Typography } from "~/shared/ui/components";
 import {
 	type MixGenresService,
-	MixGenresServiceContainerToken,
+	$MixGenresService,
 } from "../../service/mix-genres.service";
 
 import styles from "./user-favorite-artists.module.css";
+import { useInjection } from "~/config";
 
 export const UserFavoriteArtists = observer(() => {
-	const mixGenresService = container.get<MixGenresService>(
-		MixGenresServiceContainerToken
-	);
+	const mixGenresService = useInjection<MixGenresService>($MixGenresService);
 
 	const top20Artists = mixGenresService.favoritesListenedArtists.slice(0, 20);
 

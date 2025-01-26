@@ -2,14 +2,14 @@ import { inject, injectable } from "inversify";
 import { makeAutoObservable } from "mobx";
 import type { Track } from "spotify-types";
 import type { INotificationService } from "~/services/notification";
-import { NotificationServiceToken } from "~/services/notification";
+import { $NotificationService } from "~/services/notification";
 import type { UserService } from "~/services/user/user.service";
-import { UserServiceContainerToken } from "~/services/user/user.service";
+import { $UserService } from "~/services/user/user.service";
 import { Api } from "~/shared/api";
 import { LoaderProcessor } from "~/shared/lib/loader-processor";
-import { type WebPlayerService, WebPlayerServiceContainerToken } from "./web-player.service";
+import { type WebPlayerService, $WebPlayerService } from "./web-player.service";
 
-export const MixedPlaylistServiceContainerToken = Symbol.for("MixedPlaylistService");
+export const $MixedPlaylistService = Symbol.for("MixedPlaylistService");
 
 @injectable()
 export class MixedPlaylistService {
@@ -18,9 +18,9 @@ export class MixedPlaylistService {
 
   constructor(
     @inject(Api) private readonly api: Api,
-    @inject(UserServiceContainerToken.UserService) private userService: UserService,
-    @inject(NotificationServiceToken) private readonly notificationService: INotificationService,
-    @inject(WebPlayerServiceContainerToken) private readonly playerService: WebPlayerService,
+    @inject($UserService) private userService: UserService,
+    @inject($NotificationService) private readonly notificationService: INotificationService,
+    @inject($WebPlayerService) private readonly playerService: WebPlayerService,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
   }

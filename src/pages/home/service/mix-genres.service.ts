@@ -7,9 +7,9 @@ import { AsyncOperation } from "~/shared/factories/async-operation";
 import { chunkArray, shuffleArray } from "~/shared/lib/collection";
 import { LoaderProcessor } from "~/shared/lib/loader-processor";
 import type { MixedPlaylistService } from "./mixed-playlist.service";
-import { MixedPlaylistServiceContainerToken } from "./mixed-playlist.service";
+import { $MixedPlaylistService } from "./mixed-playlist.service";
 
-export const MixGenresServiceContainerToken = Symbol("MixGenresService");
+export const $MixGenresService = Symbol.for("MixGenresService");
 
 interface TrackWithArtist {
   track: string;
@@ -65,7 +65,7 @@ export class MixGenresService implements IService {
 
   constructor(
     @inject(Api) private api: Api,
-    @inject(MixedPlaylistServiceContainerToken) private mixedPlaylistService: MixedPlaylistService,
+    @inject($MixedPlaylistService) private mixedPlaylistService: MixedPlaylistService,
   ) {
     makeAutoObservable(this);
 

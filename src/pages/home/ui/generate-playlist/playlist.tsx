@@ -7,9 +7,9 @@ import PlayIcon from "~/shared/ui/assets/player-icons/play.svg?react";
 import { AudioVisualizer } from "~/shared/ui/components";
 import { Typography } from "~/shared/ui/components/typography/typography";
 import type { MixedPlaylistService } from "../../service/mixed-playlist.service";
-import { MixedPlaylistServiceContainerToken } from "../../service/mixed-playlist.service";
+import { $MixedPlaylistService } from "../../service/mixed-playlist.service";
 import type { WebPlayerService } from "../../service/web-player.service";
-import { WebPlayerServiceContainerToken } from "../../service/web-player.service";
+import { $WebPlayerService } from "../../service/web-player.service";
 import styles from "./generate-playlist.module.scss";
 
 const formatDuration = (ms: number) => {
@@ -79,10 +79,8 @@ const Track = memo(
 );
 
 export const Playlist = observer(() => {
-	const mixedPlaylistService = useInjection<MixedPlaylistService>(
-		MixedPlaylistServiceContainerToken,
-	);
-	const playerService = useInjection<WebPlayerService>(WebPlayerServiceContainerToken);
+	const mixedPlaylistService = useInjection<MixedPlaylistService>($MixedPlaylistService);
+	const playerService = useInjection<WebPlayerService>($WebPlayerService);
 
 	const { mixedPlaylist } = mixedPlaylistService;
 	const { currentActiveTrackId } = playerService;

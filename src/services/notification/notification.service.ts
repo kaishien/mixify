@@ -7,7 +7,7 @@ export interface INotificationService {
 	showInfo(message: string): void;
 }
 
-export const NotificationServiceToken = Symbol.for("NotificationServiceToken");
+export const $NotificationService = Symbol.for("NotificationService");
 
 @injectable()
 export class NotificationService implements INotificationService {

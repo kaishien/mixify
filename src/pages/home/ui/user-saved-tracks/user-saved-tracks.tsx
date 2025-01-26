@@ -3,13 +3,11 @@ import { Link } from "react-router-dom";
 import { useInjection } from "~/config";
 import {
 	type MixGenresService,
-	MixGenresServiceContainerToken,
+	$MixGenresService,
 } from "../../service/mix-genres.service";
 
 export const UserSavedTracks = observer(() => {
-	const mixGenresService = useInjection<MixGenresService>(
-		MixGenresServiceContainerToken
-	);
+	const mixGenresService = useInjection<MixGenresService>($MixGenresService);
 
 	return (
 		<article>
