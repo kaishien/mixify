@@ -122,12 +122,13 @@ export class HttpClient {
 		return response.json();
 	}
 
-	async delete<T>(url: string, options?: RequestInit): Promise<T> {
+	async delete<T, U>(url: string, body?: U, options?: RequestInit): Promise<T> {
 		const response = await fetch(`${this.baseURL}${url}`, {
 			headers: {
 				'Authorization': `Bearer ${this.accessToken}`,
 				...options?.headers,
 			},
+			body: JSON.stringify(body),
 			method: "DELETE",
 			...options,
 		});

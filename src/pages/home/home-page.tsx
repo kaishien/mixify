@@ -15,6 +15,7 @@ import {
 } from "./service/mix-genres.service";
 import type { MixedPlaylistService } from "./service/mixed-playlist.service";
 import { MixedPlaylistServiceContainerToken } from "./service/mixed-playlist.service";
+import { type WebPlayerService, WebPlayerServiceContainerToken } from "./service/web-player.service";
 import { GeneratePlaylist } from "./ui/generate-playlist/generate-playlist";
 import { UserFavoriteArtists } from "./ui/user-favorite-artists/user-favorite-artists";
 import { UserGenres } from "./ui/user-genres/user-genres";
@@ -47,6 +48,7 @@ const PageLoader = observer(() => {
 const Home = observer(() => {
 	const mixGenresService = useInjection<MixGenresService>(MixGenresServiceContainerToken);
 	const mixPlaylistService = useInjection<MixedPlaylistService>(MixedPlaylistServiceContainerToken);
+	const playerService = useInjection<WebPlayerService>(WebPlayerServiceContainerToken);
 
 	useEffect(() => {
 		document.body.style.backgroundColor = "var(--background-color-dark)";
@@ -88,7 +90,7 @@ const Home = observer(() => {
 				</div>
 				<div
 					className={clsx(
-						mixPlaylistService.playerService.currentActiveTrackId
+						playerService.currentActiveTrackId
 							? styles.webPlayback
 							: styles.webPlaybackHidden,
 					)}
@@ -107,4 +109,5 @@ export const HomePage = withContainer(Home, [
 	AuthServiceContainerToken.AuthService,
 	MixGenresServiceContainerToken,
 	MixedPlaylistServiceContainerToken,
+	WebPlayerServiceContainerToken,
 ]);

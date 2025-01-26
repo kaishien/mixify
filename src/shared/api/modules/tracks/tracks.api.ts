@@ -41,4 +41,20 @@ export class TracksApi {
 
 		return results.flat();
 	}
+
+	async saveTrackToFavorites(trackId: string) {
+		return this.baseClient.put("/v1/me/tracks", {
+			ids: [trackId],
+		});
+	}
+
+	async removeTrackFromFavorites(trackId: string) {
+		return this.baseClient.delete("/v1/me/tracks", {
+			ids: [trackId],
+		});
+	}
+
+	async checkIsFavorite(trackId: string) {
+		return this.baseClient.get<boolean[]>(`/v1/me/tracks/contains?ids=${trackId}`);
+	}
 }

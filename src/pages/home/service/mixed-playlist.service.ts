@@ -7,30 +7,26 @@ import type { UserService } from "~/services/user/user.service";
 import { UserServiceContainerToken } from "~/services/user/user.service";
 import { Api } from "~/shared/api";
 import { LoaderProcessor } from "~/shared/lib/loader-processor";
-import { WebPlayerService } from "./web-player.service";
+import { type WebPlayerService, WebPlayerServiceContainerToken } from "./web-player.service";
 
 export const MixedPlaylistServiceContainerToken = Symbol.for("MixedPlaylistService");
 
 @injectable()
 export class MixedPlaylistService {
   mixedPlaylist: Track[] = [];
-  playerService = new WebPlayerService();
   addingToLibraryLoader = new LoaderProcessor();
 
   constructor(
     @inject(Api) private readonly api: Api,
     @inject(UserServiceContainerToken.UserService) private userService: UserService,
     @inject(NotificationServiceToken) private readonly notificationService: INotificationService,
+    @inject(WebPlayerServiceContainerToken) private readonly playerService: WebPlayerService,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
   updateMixedPlaylist(tracks: Track[]) {
     this.mixedPlaylist = tracks;
-  }
-
-  updateDeviceId(deviceId: string) {
-    this.playerService.deviceId = deviceId;
   }
 
   get mixedTracksUris() {

@@ -3,8 +3,8 @@ import { useCallback, useEffect, useRef } from "react";
 
 import { useInjection } from "~/config";
 import { type AuthService, AuthServiceContainerToken } from "~/services/auth";
-import type { MixedPlaylistService } from "../../service/mixed-playlist.service";
-import { MixedPlaylistServiceContainerToken } from "../../service/mixed-playlist.service";
+import type { WebPlayerService } from "../../service/web-player.service";
+import { WebPlayerServiceContainerToken } from "../../service/web-player.service";
 import { AdditionalControls } from "./additional-controls";
 import { PlaybackControls } from "./playback-controls";
 import { ProgressBar } from "./progress-bar";
@@ -16,11 +16,8 @@ const PLAYER_NAME = "Mixify Web Player";
 
 export const WebPlayback = observer(() => {
 	const authService = useInjection<AuthService>(AuthServiceContainerToken.AuthService);
-	const mixedPlaylistService = useInjection<MixedPlaylistService>(
-		MixedPlaylistServiceContainerToken,
-	);
+	const playerService = useInjection<WebPlayerService>(WebPlayerServiceContainerToken);
 
-	const playerService = mixedPlaylistService.playerService;
 	const token = authService.getToken();
 
 	const progressBarRef = useRef<HTMLInputElement>(null);
@@ -28,7 +25,7 @@ export const WebPlayback = observer(() => {
 	const handleVolumeChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const value = Number(e.target.value);
-			playerService.handleVolumeChange(value);
+			playerService.volumeChange(value);
 		},
 		[playerService],
 	);
@@ -36,7 +33,7 @@ export const WebPlayback = observer(() => {
 	const handleProgressChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const value = Number(e.target.value);
-			playerService.handleProgressChange(value);
+			playerService.progressChange(value);
 		},
 		[playerService],
 	);
@@ -60,7 +57,7 @@ export const WebPlayback = observer(() => {
 			playerService.setPlayerInstance(player);
 
 			player.addListener("ready", ({ device_id }) => {
-				mixedPlaylistService.updateDeviceId(device_id);
+				playerService.setDeviceId(device_id);
 				playerService.playerReady.set(true);
 			});
 
@@ -110,10 +107,14 @@ export const WebPlayback = observer(() => {
 							<AdditionalControls
 								volume={playerService.volume}
 								isMuted={playerService.isMuted}
-								isFavorite={false}
+								isFavorite={playerService.currentTrackIsFavorite}
 								onVolumeChange={handleVolumeChange}
-								onVolumeToggle={playerService.handleVolumeToggle}
-								onFavoriteToggle={() => null}
+								onVolumeToggle={playerService.volumeToggle}
+								onFavoriteToggle={() => {
+									if (playerService.currentActiveTrackId) {
+										playerService.favoriteTrackToggle(playerService.currentActiveTrackId);
+									}
+								}}
 							/>
 						</div>
 					</div>
@@ -129,10 +130,14 @@ export const WebPlayback = observer(() => {
 						<AdditionalControls
 							volume={playerService.volume}
 							isMuted={playerService.isMuted}
-							isFavorite={true}
+							isFavorite={playerService.currentTrackIsFavorite}
 							onVolumeChange={handleVolumeChange}
-							onVolumeToggle={playerService.handleVolumeToggle}
-							onFavoriteToggle={() => null}
+							onVolumeToggle={playerService.volumeToggle}
+							onFavoriteToggle={() => {
+								if (playerService.currentActiveTrackId) {
+									playerService.favoriteTrackToggle(playerService.currentActiveTrackId);
+								}
+							}}
 						/>
 					</div>
 				</>

@@ -8,6 +8,8 @@ import { type INotificationService, NotificationService, NotificationServiceToke
 import { UserService, UserServiceContainerToken } from "~/services/user";
 import { Api, ApiFacade, ArtistApi, AuthApi, PlayerApi, PlaylistsApi, RecommendationsApi, SearchApi, TracksApi, UserApi } from "~/shared/api";
 import { ApplicationService } from "./application.service";
+import { WebPlayerService } from "~/pages/home/service/web-player.service";
+import { WebPlayerServiceContainerToken } from "~/pages/home/service/web-player.service";
 
 const container = new Container();
 
@@ -41,9 +43,11 @@ const registryServices = () => {
 				container.get(Api),
 				container.get(UserServiceContainerToken.UserService),
 				container.get(NotificationServiceToken),
+				container.get(WebPlayerServiceContainerToken),
 			);
 		})
 		.inSingletonScope();
+	container.bind(WebPlayerServiceContainerToken).to(WebPlayerService).inSingletonScope();
 };
 
 const registyApi = () => {
