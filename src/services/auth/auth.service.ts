@@ -9,7 +9,7 @@ import { Events, eventEmitter } from "~/shared/event-emmiter";
 import {
 	AsyncOperation,
 	type CacheStrategy,
-	LocalStorageCacheStrategy,
+	LocalStorageCache,
 } from "~/shared/factories/async-operation";
 
 export const $AuthService = Symbol.for("AuthService");
@@ -25,7 +25,7 @@ export class AuthService implements IService {
 	) {
 		makeAutoObservable(this);
 		this.asyncOperation = new AsyncOperation();
-		this.storage = new LocalStorageCacheStrategy();
+		this.storage = new LocalStorageCache();
 
 		eventEmitter.on(Events.TOKEN_EXPIRED, () => {
 			const authData = this.storage.get<AuthorizationResponse>(AUTH_STORAGE_KEY);

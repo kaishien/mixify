@@ -1,6 +1,6 @@
 import type { CacheStrategy } from "./cache-strategy.interface";
 
-export class MemoryCacheStrategy implements CacheStrategy {
+export class MemoryCache implements CacheStrategy {
 	private cache = new Map<string, { value: unknown; timestamp: number; ttl: number }>();
 
 	get<T>(key: string): T | null {

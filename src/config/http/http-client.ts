@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { AUTH_STORAGE_KEY } from "~/shared/constants";
 import { Events, eventEmitter } from "~/shared/event-emmiter";
-import { type CacheStrategy, LocalStorageCacheStrategy } from "~/shared/factories/async-operation";
+import { type CacheStrategy, LocalStorageCache } from "~/shared/factories/async-operation";
 
 export interface AuthorizationResponse {
 	access_token: string;
@@ -23,7 +23,7 @@ export class HttpClient {
 
 	constructor(baseURL: string) {
 		this.baseURL = baseURL;
-		this.storage = new LocalStorageCacheStrategy();
+		this.storage = new LocalStorageCache();
 		const accessTokenFromStorage = this.storage.get<AuthorizationResponse>(AUTH_STORAGE_KEY);
 		this.accessToken = accessTokenFromStorage?.access_token ?? "";
 	}

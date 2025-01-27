@@ -1,6 +1,6 @@
 import type { CacheStrategy } from "./cache-strategy.interface";
 
-export class LocalStorageCacheStrategy implements CacheStrategy {
+export class LocalStorageCache implements CacheStrategy {
 	get<T>(key: string): T | null {
 		const item = localStorage.getItem(key);
 		if (!item) return null;

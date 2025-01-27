@@ -6,8 +6,10 @@ import { $NotificationService } from "~/services/notification";
 import type { UserService } from "~/services/user/user.service";
 import { $UserService } from "~/services/user/user.service";
 import { Api } from "~/shared/api";
+import { LAST_MIXED_PLAYLIST_KEY } from "~/shared/constants/index";
+import { type CacheStrategy, LocalStorageCache } from "~/shared/factories/async-operation";
 import { LoaderProcessor } from "~/shared/lib/loader-processor";
-import { type WebPlayerService, $WebPlayerService } from "./web-player.service";
+import { $WebPlayerService, type WebPlayerService } from "./web-player.service";
 
 export const $MixedPlaylistService = Symbol.for("MixedPlaylistService");
 
@@ -15,6 +17,7 @@ export const $MixedPlaylistService = Symbol.for("MixedPlaylistService");
 export class MixedPlaylistService {
   mixedPlaylist: Track[] = [];
   addingToLibraryLoader = new LoaderProcessor();
+  private storage: CacheStrategy;
 
   constructor(
     @inject(Api) private readonly api: Api,
@@ -23,10 +26,26 @@ export class MixedPlaylistService {
     @inject($WebPlayerService) private readonly playerService: WebPlayerService,
   ) {
     makeAutoObservable(this, {}, { autoBind: true });
+    this.storage = new LocalStorageCache();
+    
+    const savedPlaylist = this.storage.get<Track[]>(LAST_MIXED_PLAYLIST_KEY);
+    if (savedPlaylist) {
+      this.mixedPlaylist = savedPlaylist;
+    }
   }
 
   updateMixedPlaylist(tracks: Track[]) {
     this.mixedPlaylist = tracks;
+    if (tracks.length > 0) {
+      this.storage.set(LAST_MIXED_PLAYLIST_KEY, tracks, 1000 * 60 * 60 * 24);
+    } else {
+      this.storage.remove(LAST_MIXED_PLAYLIST_KEY);
+    }
+  }
+
+  clearMixedPlaylist() {
+    this.mixedPlaylist = [];
+    this.storage.remove(LAST_MIXED_PLAYLIST_KEY);
   }
 
   get mixedTracksUris() {
