@@ -55,27 +55,57 @@ export class HttpClient {
 
 	async get<T>(url: string, options?: RequestOptions): Promise<T> {
 		const { params, headers, ...restOptions } = options || {};
-		const fullUrl = this.createUrl(url, params);
+		const maxRetries = 3;
+		let retryCount = 0;
+		let lastError: Error | null = null;
 
-		const response = await fetch(fullUrl, {
-			headers: {
-				Authorization: `Bearer ${this.accessToken}`,
-				...headers,
-			},
-			...restOptions,
-		});
+		while (retryCount < maxRetries) {
+			try {
+				const fullUrl = this.createUrl(url, params);
+				const response = await fetch(fullUrl, {
+					headers: {
+						Authorization: `Bearer ${this.accessToken}`,
+						"Accept-Language": "en",
+						...headers,
+					},
+					...restOptions,
+				});
 
-		if (response.status === 401) {
-			eventEmitter.emit(Events.TOKEN_EXPIRED);
-			throw new Error("Token expired");
+				if (response.status === 401) {
+					eventEmitter.emit(Events.TOKEN_EXPIRED);
+					throw new Error("Token expired");
+				}
+
+				if (response.status === 403) {
+					eventEmitter.emit(Events.AUTH_ERROR);
+					throw new Error("Auth error");
+				}
+
+				if (response.status === 429) {
+					const retryAfter = response.headers.get("Retry-After");
+					const waitTime = retryAfter
+						? Number.parseInt(retryAfter) * 1000
+						: 1000 * (retryCount + 1);
+					await new Promise((resolve) => setTimeout(resolve, waitTime));
+					retryCount++;
+					continue;
+				}
+
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+
+				return response.json();
+			} catch (error) {
+				lastError = error as Error;
+				if (retryCount === maxRetries - 1) {
+					throw error;
+				}
+				retryCount++;
+			}
 		}
 
-		if (response.status === 403) {
-			eventEmitter.emit(Events.AUTH_ERROR);
-			throw new Error("Auth error");
-		}
-
-		return response.json();
+		throw lastError || new Error("Maximum retries exceeded");
 	}
 
 	async post<T>(url: string, data: unknown, options?: RequestInit): Promise<T> {
@@ -84,6 +114,7 @@ export class HttpClient {
 			body: data instanceof URLSearchParams ? data : JSON.stringify(data),
 			headers: {
 				Authorization: `Bearer ${this.accessToken}`,
+				"Accept-Language": "en",
 				...options?.headers,
 			},
 			...options,
@@ -101,6 +132,7 @@ export class HttpClient {
 			method: "PUT",
 			headers: {
 				Authorization: `Bearer ${this.accessToken}`,
+				"Accept-Language": "en",
 				...options?.headers,
 			},
 			body: JSON.stringify(body),
@@ -131,6 +163,7 @@ export class HttpClient {
 		const response = await fetch(`${this.baseURL}${url}`, {
 			headers: {
 				Authorization: `Bearer ${this.accessToken}`,
+				"Accept-Language": "en",
 				...options?.headers,
 			},
 			body: JSON.stringify(body),
