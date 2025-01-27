@@ -46,13 +46,15 @@ export class AuthService implements IService {
 	async initialize(): Promise<void> { }
 
 	private async refreshTokenIfNeeded(authData: AuthorizationResponse): Promise<void> {
-		if (!authData.refresh_token) return;
+		if (!authData.refresh_token) {
+			this.storage.remove(AUTH_STORAGE_KEY);
+			await this.authorize();
+			return;
+		}
 
 		const result = await this.asyncOperation.execute(
 			async () => await this.api.auth.refreshToken(authData.refresh_token),
 		);
-
-		this.storage.set(AUTH_STORAGE_KEY, result.data, authData.expires_in * 1000);
 
 		if (result.data?.refresh_token) {
 			this.storage.set(AUTH_STORAGE_KEY, result.data, authData.expires_in * 1000);
