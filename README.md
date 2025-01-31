@@ -27,7 +27,7 @@ git clone https://github.com/kaishien/mixify.git
 
 2. Install dependencies:
 ```bash
-npm install
+pnpm install
 ```
 
 3. Create a `.env` file in the root directory with your Spotify API credentials:
@@ -38,5 +38,5 @@ VITE_SPOTIFY_REDIRECT_URI=http://localhost:5173/callback
 
 4. Start the development server:
 ```bash
-npm run dev
+pnpm run dev
 ```
