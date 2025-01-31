@@ -71,12 +71,7 @@ export class HttpClient {
 					...restOptions,
 				});
 
-				if (response.status === 401) {
-					eventEmitter.emit(Events.TOKEN_EXPIRED);
-					throw new Error("Token expired");
-				}
-
-				if (response.status === 403) {
+				if (response.status === 403 || response.status === 401) {
 					eventEmitter.emit(Events.AUTH_ERROR);
 					throw new Error("Auth error");
 				}
@@ -143,9 +138,9 @@ export class HttpClient {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		if (response.status === 401) {
-			eventEmitter.emit(Events.TOKEN_EXPIRED);
-			throw new Error("Token expired");
+		if (response.status === 403 || response.status === 401) {
+			eventEmitter.emit(Events.AUTH_ERROR);
+			throw new Error("Auth error");
 		}
 
 		if (response.status === 403) {
@@ -175,9 +170,9 @@ export class HttpClient {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		if (response.status === 401) {
-			eventEmitter.emit(Events.TOKEN_EXPIRED);
-			throw new Error("Token expired");
+		if (response.status === 403 || response.status === 401) {
+			eventEmitter.emit(Events.AUTH_ERROR);
+			throw new Error("Auth error");
 		}
 
 		if (response.status === 403) {
