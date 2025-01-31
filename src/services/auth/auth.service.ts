@@ -35,6 +35,7 @@ export class AuthService implements IService {
 		});
 
 		eventEmitter.on(Events.AUTH_ERROR, () => {
+			this.storage.remove(AUTH_STORAGE_KEY);
 			this.routerService.push("/login");
 		});
 	}
